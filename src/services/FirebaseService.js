@@ -35,10 +35,6 @@ export class FirebaseService {
     this.isInitialized = false;
   }
 
-  /**
-   * Initialize Firebase connection.
-   * @param {object} config - Firebase config object
-   */
   async initialize(config) {
     if (this.isInitialized) return;
 
@@ -46,6 +42,12 @@ export class FirebaseService {
       this.app = initializeApp(config);
       this.auth = getAuth(this.app);
       this.db = getFirestore(this.app);
+      
+      console.log('[Diagnostics] auth start: Starting anonymous authentication');
+      const userCredential = await signInAnonymously(this.auth);
+      console.log('[Diagnostics] auth success: Anonymous authentication complete');
+      console.log(`[Diagnostics] assigned UID: ${userCredential.user.uid}`);
+
       this.isInitialized = true;
       console.log('Firebase initialized successfully.');
     } catch (error) {
@@ -101,9 +103,12 @@ export class FirebaseService {
     }
 
     try {
-      // 1. Sign in anonymously to get a unique UID for Firestore security rules validation
-      const userCredential = await signInAnonymously(this.auth);
-      const uid = userCredential.user.uid;
+      // 1. Get the current authenticated user UID (already authenticated during initialize)
+      const currentUser = this.auth.currentUser;
+      if (!currentUser) {
+        throw new Error('User is not authenticated. Cannot create user record.');
+      }
+      const uid = currentUser.uid;
 
       // 2. Prepare payload matching Users Structure (Section 16)
       const payload = {
