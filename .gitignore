@@ -26,3 +26,8 @@ npm-debug.log*
 # Firebase
 .firebase/
 firebase-debug.log
+
+# Scratch and NPM config
+scratch/
+.npmrc
+mcp_config.json

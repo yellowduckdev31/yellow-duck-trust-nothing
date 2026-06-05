@@ -216,7 +216,11 @@ export class GameScene extends Phaser.Scene {
     this.isLevelComplete = true;
     // Launch game over overlay
     this.scene.pause();
-    this.scene.launch(SCENES.GAME_OVER, { level: this.currentLevel });
+    this.scene.launch(SCENES.GAME_OVER, {
+      level: this.currentLevel,
+      deaths: this.stats.deaths,
+      score: this.stats.score
+    });
   }
 
   onPause() {

@@ -159,11 +159,11 @@ export class AchievementSystem {
     const targetY = padding + height / 2;
 
     const bg = scene.add.rectangle(startX, targetY, width, height, 0x111111, 0.9)
-      .setStrokeStyle(2, COLORS_HEX.DUCK_YELLOW)
+      .setStrokeStyle(2, COLORS_HEX.YELLOW)
       .setScrollFactor(0)
       .setDepth(5000);
       
-    const titleText = UIHelper.createText(scene, startX, targetY - 15, `Achievement Unlocked!`, 16, COLORS_HEX.DUCK_YELLOW)
+    const titleText = UIHelper.createText(scene, startX, targetY - 15, `Achievement Unlocked!`, 16, COLORS_HEX.YELLOW)
       .setScrollFactor(0).setDepth(5001).setOrigin(0.5);
       
     const nameText = UIHelper.createText(scene, startX, targetY + 10, ach.name, 20, 0xFFFFFF)

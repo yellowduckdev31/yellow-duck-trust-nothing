@@ -1,0 +1,73 @@
+rules_version = '2';
+// Firestore Security Rules
+// References: PROJECT_CONTEXT.md Section 17 — Firebase Rules
+//
+// Collections:
+//   users       — keyed by normalized username (lowercase)
+//   leaderboard — keyed by normalized username
+//   statistics  — global stats document
+//   achievements — keyed by normalized username
+//
+// Auth: Anonymous Auth (signInAnonymously) provides auth.uid
+//
+// Rules:
+//   users:      owner read/write (auth.uid == stored uid), username immutable after creation
+//   leaderboard: public read, owner write only
+//   statistics:  public read, any authenticated write
+//   achievements: owner read/write only
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- users collection ---
+    // Document ID = normalized username (lowercase)
+    // Field 'uid' stores the anonymous auth UID for ownership check
+    match /users/{username} {
+      // Only the owner (matching uid) may read their own document
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+
+      // Allow create only when the document doesn't yet exist
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.uid
+                    && request.resource.data.username is string
+                    && request.resource.data.username.size() >= 3
+                    && request.resource.data.username.size() <= 16;
+
+      // Allow update only by the owner; username and uid fields are immutable
+      allow update: if request.auth != null
+                    && request.auth.uid == resource.data.uid
+                    && request.resource.data.username == resource.data.username
+                    && request.resource.data.uid == resource.data.uid;
+
+      // No deletes allowed
+      allow delete: if false;
+    }
+
+    // --- leaderboard collection ---
+    // Public read so anyone can see rankings without logging in
+    // Write only by the owner (uid must match)
+    match /leaderboard/{username} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == request.resource.data.uid;
+      allow delete: if false;
+    }
+
+    // --- statistics collection ---
+    // Global stats; public read, any authenticated write
+    match /statistics/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+      allow delete: if false;
+    }
+
+    // --- achievements collection ---
+    // Owner read/write only
+    match /achievements/{username} {
+      allow read:  if request.auth != null && request.auth.uid == resource.data.uid;
+      allow write: if request.auth != null
+                   && request.auth.uid == request.resource.data.uid;
+      allow delete: if false;
+    }
+  }
+}

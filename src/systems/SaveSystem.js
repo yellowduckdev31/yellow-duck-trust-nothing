@@ -23,6 +23,28 @@ export class SaveSystem {
   }
 
   /**
+   * Compatibility getter/setter for scenes accessing saveSystem.data
+   */
+  get data() {
+    if (!this.currentData) {
+      this.currentData = {};
+    }
+    return this.currentData;
+  }
+
+  set data(val) {
+    this.currentData = val;
+  }
+
+  /**
+   * Alias for autoSave to support scenes calling saveSystem.save()
+   */
+  save() {
+    return this.autoSave();
+  }
+
+
+  /**
    * Check if an active username is saved on this device.
    * @returns {boolean}
    */

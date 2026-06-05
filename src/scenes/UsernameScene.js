@@ -114,8 +114,7 @@ export class UsernameScene extends Phaser.Scene {
       
       // 4. Save locally
       if (this.saveSystem) {
-        this.saveSystem.data.username = newUser.username;
-        this.saveSystem.data.uid = newUser.uid;
+        this.saveSystem.data = newUser;
         this.saveSystem.save(); // Persist
       }
 

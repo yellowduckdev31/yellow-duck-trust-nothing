@@ -52,7 +52,13 @@ export class GameOverScene extends Phaser.Scene {
     UIHelper.createButton(this, width / 2 - 120, height / 2 + 120, 'RETRY', () => this.onRetry(), 200, 50);
     UIHelper.createButton(this, width / 2 + 120, height / 2 + 120, 'MENU', () => this.onMainMenu(), 200, 50);
 
-    // TODO: Update SaveSystem to record the loss/deaths (Section 14)
+    // Update SaveSystem to record the loss/deaths (Section 14)
+    const saveSystem = this.registry.get('saveSystem');
+    if (saveSystem) {
+      saveSystem.data.deaths = (saveSystem.data.deaths || 0) + this.deaths;
+      saveSystem.data.lives = 5; // Reset starting lives to 5
+      saveSystem.save();
+    }
   }
 
   onRetry() {

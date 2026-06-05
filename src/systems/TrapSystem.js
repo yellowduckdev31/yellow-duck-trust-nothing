@@ -140,7 +140,11 @@ export class TrapSystem {
     // The GameScene will handle the collision callback to trigger the fall
     floor.setData('isFakeFloor', true);
     floor.setData('triggered', false);
+    // Store original position for reset() to restore after respawn
+    floor.setData('originX', data.x);
+    floor.setData('originY', data.y);
   }
+
 
   triggerFakeFloor(floorSprite) {
     if (floorSprite.getData('triggered')) return;
@@ -297,6 +301,62 @@ export class TrapSystem {
           secretZone.setData('found', true);
           console.log('Secret Area Found!');
           // Here we would call AchievementSystem.unlock('FIND_SECRET_AREA')
+        }
+      });
+    }
+  }
+
+  /**
+   * Get the physics group containing solid (blocking) traps.
+   * Used by GameScene to register platform colliders.
+   * @returns {Phaser.Physics.Arcade.Group}
+   */
+  getSolidGroup() {
+    return this.solidGroup;
+  }
+
+  /**
+   * Get the physics group containing lethal traps.
+   * Used by GameScene to register death overlap.
+   * @returns {Phaser.Physics.Arcade.Group}
+   */
+  getLethalGroup() {
+    return this.lethalGroup;
+  }
+
+  /**
+   * Reset all stateful traps to their initial state.
+   * Called by GameScene after a player respawn so the level
+   * remains fair (hidden spikes re-hide, fake floors re-solidify).
+   */
+  reset() {
+    // 1. Re-hide and un-trigger HiddenSpike updatable traps
+    this.updatableTraps.forEach(trap => {
+      if (trap.sprite && trap.sprite.getData('deathType') === 'spike') {
+        // Only reset traps that have a triggered flag (HiddenSpikes)
+        if ('triggered' in trap) {
+          trap.triggered = false;
+          trap.sprite.setVisible(false);
+          // Move the spike back below the floor so it pops up again on approach
+          trap.sprite.y = trap.sprite.y + 32;
+        }
+      }
+    });
+
+    // 2. Reset Fake Floors — restore body so player can stand on them again
+    if (this.solidGroup) {
+      this.solidGroup.getChildren().forEach(child => {
+        if (child.getData('isFakeFloor') && child.getData('triggered')) {
+          child.setData('triggered', false);
+          // Re-enable gravity-resistance and collision
+          child.body.allowGravity = false;
+          child.body.immovable = true;
+          child.body.checkCollision.none = false;
+          // Restore to original Y position stored on creation
+          if (child.getData('originY') !== undefined) {
+            child.setPosition(child.getData('originX'), child.getData('originY'));
+          }
+          child.body.reset(child.x, child.y);
         }
       });
     }

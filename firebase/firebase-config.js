@@ -2,7 +2,7 @@
  * firebase-config.js
  * 
  * Firebase project configuration.
- * Replace placeholder values with actual Firebase project credentials.
+ * Contains the credentials for project: yellow-duck-trust-9f82d
  * 
  * References: PROJECT_CONTEXT.md
  *   Section 16 — Firebase Database
@@ -10,10 +10,10 @@
  */
 
 export const firebaseConfig = {
-  apiKey:            'YOUR_API_KEY',
-  authDomain:        'YOUR_PROJECT.firebaseapp.com',
-  projectId:         'YOUR_PROJECT_ID',
-  storageBucket:     'YOUR_PROJECT.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId:             'YOUR_APP_ID',
+  apiKey:            'AIzaSyCykgDSOIpPrdCvMBeYhO_WF3GrXVZ2WkI',
+  authDomain:        'yellow-duck-trust-9f82d.firebaseapp.com',
+  projectId:         'yellow-duck-trust-9f82d',
+  storageBucket:     'yellow-duck-trust-9f82d.firebasestorage.app',
+  messagingSenderId: '110245262797',
+  appId:             '1:110245262797:web:33eb2071a7908604e8c084',
 };

@@ -13,6 +13,7 @@
 
 import { SCENES } from '../core/config.js';
 import { FirebaseService } from '../services/FirebaseService.js';
+import { firebaseConfig } from '../../firebase/firebase-config.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
 import { LeaderboardSystem } from '../systems/LeaderboardSystem.js';
 import { AchievementSystem } from '../systems/AchievementSystem.js';
@@ -51,35 +52,60 @@ export class BootScene extends Phaser.Scene {
       loadingText.destroy();
     });
 
-    // 1. Generate Placeholder Textures programmatically so the game doesn't crash without real PNGs
+    // 1. Generate placeholder textures FIRST as a safety fallback.
+    //    If a real PNG loads successfully below, Phaser replaces the canvas texture.
     this.generatePlaceholderTextures();
 
-    // 2. Load Level JSONs from the 'levels/' directory we created earlier
+    // 2. Load real character PNG assets (present on disk)
+    this.load.image('YD_Idle',     'assets/character/YD_Idle.png');
+    this.load.image('YD_Walk',     'assets/character/YD_Walk.png');
+    this.load.image('YD_Jump',     'assets/character/YD_Jump.png');
+    this.load.image('YD_Fall',     'assets/character/YD_Fall.png');
+    this.load.image('YD_Death',    'assets/character/YD_Death.png');
+    this.load.image('YD_Portrait', 'assets/character/YD_Portrait.png');
+    this.load.image('YD_Menu',     'assets/character/YD_Menu.png');
+
+    // 3. Load real trap PNG assets (present on disk)
+    this.load.image('TRAP_StaticSpike',    'assets/traps/TRAP_StaticSpike.png');
+    this.load.image('TRAP_MovingSpike',    'assets/traps/TRAP_MovingSpike.png');
+    this.load.image('TRAP_HiddenSpike',    'assets/traps/TRAP_HiddenSpike.png');
+    this.load.image('TRAP_FakeFloor',      'assets/traps/TRAP_FakeFloor.png');
+    this.load.image('TRAP_FallingPlatform','assets/traps/TRAP_FallingPlatform.png');
+    this.load.image('TRAP_MovingPlatform', 'assets/traps/TRAP_MovingPlatform.png');
+    this.load.image('TRAP_FakeExit',       'assets/traps/TRAP_FakeExit.png');
+
+    // 4. Load real environment PNG assets (present on disk)
+    this.load.image('GroundTile', 'assets/environment/GroundTile.png');
+    this.load.image('WallTile',   'assets/environment/WallTile.png');
+
+    // 5. Load Level JSONs
     for (let i = 1; i <= 10; i++) {
       const numStr = i < 10 ? `0${i}` : `${i}`;
       this.load.json(`level_${i}`, `levels/level_${numStr}.json`);
     }
     this.load.json('level_11', 'levels/level_secret_11.json');
-    
-    // We would load real assets here:
-    // this.load.image('GroundTile', 'assets/GroundTile.png'); 
-    // etc.
   }
+
 
   async create() {
     console.log("Booting game and initializing systems...");
 
     // 1. Initialize Firebase
     const firebaseService = new FirebaseService();
-    // Use dummy config for local testing, or real config if available
-    await firebaseService.initialize({
-      apiKey: "dummy-key-for-local-dev",
-      authDomain: "dummy.firebaseapp.com",
-      projectId: "yellow-duck-trust-nothing"
-    }).catch(e => console.warn("Firebase Init Failed (likely due to dummy config), continuing in offline mode.", e));
+    // Use real config from firebase-config.js
+    await firebaseService.initialize(firebaseConfig).catch(e => console.warn("Firebase Init Failed, continuing in offline mode.", e));
 
     // 2. Initialize other systems
     const saveSystem = new SaveSystem(firebaseService);
+    const savedUsername = saveSystem.getUsername();
+    if (savedUsername) {
+      try {
+        await saveSystem.loadSave(savedUsername);
+        console.log(`Successfully auto-loaded saved progress for ${savedUsername}`);
+      } catch (e) {
+        console.warn("Failed to load save from Firebase during boot:", e);
+      }
+    }
     const leaderboardSystem = new LeaderboardSystem(firebaseService);
     const achievementSystem = new AchievementSystem();
 
@@ -105,7 +131,7 @@ export class BootScene extends Phaser.Scene {
       g.destroy();
     };
 
-    makeTex('Duck_Idle', 0xFFD43B, 48, 64);
+    makeTex('YD_Idle', 0xFFD43B, 48, 64);
     makeTex('GroundTile', 0x4CAF50, 64, 64);
     makeTex('GoalDoor', 0x795548, 64, 128);
     makeTex('CheckpointFlag', 0x8BC34A, 64, 128);

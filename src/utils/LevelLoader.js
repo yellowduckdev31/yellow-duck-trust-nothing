@@ -75,11 +75,15 @@ export class LevelLoader {
     return {
       levelId: levelData.level,
       name: levelData.name,
-      spawn: levelData.spawn, // {x, y}
-      goal: goal,
-      platforms: platforms,
-      checkpoints: checkpoints,
-      trapsData: trapsData
+      spawn: levelData.spawn,             // { x, y }
+      solidGroup: platforms,              // GameScene: this.levelEnvironment.solidGroup
+      checkpointGroup: checkpoints,       // GameScene: this.levelEnvironment.checkpointGroup
+      goalDoor: goal,                     // GameScene: this.levelEnvironment.goalDoor
+      trapsData: trapsData,
+      // Provide default world dimensions; levels may omit explicit size
+      width: levelData.width || 3200,
+      height: levelData.height || 800
     };
+
   }
 }

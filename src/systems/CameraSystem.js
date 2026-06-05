@@ -24,9 +24,11 @@ export class CameraSystem {
    * @param {object} levelBounds - { width, height }
    */
   setup(player, levelBounds) {
-    // TODO: Set camera bounds to level size
-    // TODO: Start following player with lerp 0.15
-    // TODO: Set zoom to 1
+    if (levelBounds) {
+      this.scene.cameras.main.setBounds(0, 0, levelBounds.width, levelBounds.height);
+    }
+    this.scene.cameras.main.startFollow(player, true, GAME_CONFIG.CAMERA.LERP, GAME_CONFIG.CAMERA.LERP);
+    this.scene.cameras.main.setZoom(GAME_CONFIG.CAMERA.ZOOM);
   }
 
   /**
@@ -35,7 +37,7 @@ export class CameraSystem {
    * @param {number} intensity - Shake intensity
    */
   shake(duration = 100, intensity = 0.01) {
-    // TODO: this.scene.cameras.main.shake(duration, intensity)
+    this.scene.cameras.main.shake(duration, intensity);
   }
 
   /**
@@ -43,7 +45,7 @@ export class CameraSystem {
    * @param {number} duration
    */
   flash(duration = 200) {
-    // TODO: this.scene.cameras.main.flash(duration)
+    this.scene.cameras.main.flash(duration);
   }
 
   /**
@@ -52,11 +54,13 @@ export class CameraSystem {
    * @param {Function} onComplete
    */
   fadeOut(duration = 300, onComplete) {
-    // TODO: this.scene.cameras.main.fadeOut(duration)
-    // TODO: Call onComplete when done
+    this.scene.cameras.main.fadeOut(duration);
+    this.scene.cameras.main.once('camerafadeoutcomplete', () => {
+      if (onComplete) onComplete();
+    });
   }
 
   fadeIn(duration = 300) {
-    // TODO: this.scene.cameras.main.fadeIn(duration)
+    this.scene.cameras.main.fadeIn(duration);
   }
 }

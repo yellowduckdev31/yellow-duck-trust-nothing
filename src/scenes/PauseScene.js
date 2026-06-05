@@ -46,7 +46,10 @@ export class PauseScene extends Phaser.Scene {
     UIHelper.createButton(this, width / 2, height / 2 + 80, 'SETTINGS', () => this.onSettings(), 250, 50);
     UIHelper.createButton(this, width / 2, height / 2 + 150, 'MAIN MENU', () => this.onMainMenu(), 250, 50);
 
-    // TODO: Trigger auto-save via SaveSystem (Section 14)
+    const saveSystem = this.registry.get('saveSystem');
+    if (saveSystem) {
+      saveSystem.save();
+    }
   }
 
   onResume() {
