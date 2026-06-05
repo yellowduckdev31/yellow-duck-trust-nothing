@@ -68,20 +68,53 @@ export class UsernameScene extends Phaser.Scene {
   }
 
   async onSubmit() {
+    console.log('[Diagnostics] onSubmit triggered. Current input:', this.currentInput);
+
     if (!this.currentInput) {
+      console.log('[Diagnostics] Validation failed: Username is empty.');
       this.statusText.setText('Username cannot be empty.');
       return;
     }
 
     // 1. Local Validation
     const regex = /^[a-zA-Z0-9]+$/;
-    if (this.currentInput.length < GAME_CONFIG.USERNAME.MIN_LENGTH || this.currentInput.length > GAME_CONFIG.USERNAME.MAX_LENGTH) {
+    const isLengthValid = this.currentInput.length >= GAME_CONFIG.USERNAME.MIN_LENGTH && this.currentInput.length <= GAME_CONFIG.USERNAME.MAX_LENGTH;
+    const isAlphanumeric = regex.test(this.currentInput);
+
+    console.log('[Diagnostics] Username validation details:', {
+      username: this.currentInput,
+      length: this.currentInput.length,
+      minLength: GAME_CONFIG.USERNAME.MIN_LENGTH,
+      maxLength: GAME_CONFIG.USERNAME.MAX_LENGTH,
+      isLengthValid,
+      isAlphanumeric
+    });
+
+    if (!isLengthValid) {
       this.statusText.setText(`Must be ${GAME_CONFIG.USERNAME.MIN_LENGTH}-${GAME_CONFIG.USERNAME.MAX_LENGTH} characters.`);
       return;
     }
-    if (!regex.test(this.currentInput)) {
+    if (!isAlphanumeric) {
       this.statusText.setText('Letters and numbers only.');
       return;
+    }
+
+    // Diagnostics: Authentication state
+    const auth = this.firebaseService ? this.firebaseService.auth : null;
+    const db = this.firebaseService ? this.firebaseService.db : null;
+    console.log('[Diagnostics] Firebase Auth / DB existence check:', {
+      firebaseServiceExists: !!this.firebaseService,
+      isInitialized: this.firebaseService?.isInitialized,
+      authExists: !!auth,
+      dbExists: !!db
+    });
+
+    if (auth) {
+      console.log('[Diagnostics] Firebase Auth currentUser details:', auth.currentUser ? {
+        uid: auth.currentUser.uid,
+        isAnonymous: auth.currentUser.isAnonymous,
+        email: auth.currentUser.email
+      } : 'No current user (not authenticated)');
     }
 
     this.statusText.setText('Validating with Server...');
@@ -89,8 +122,12 @@ export class UsernameScene extends Phaser.Scene {
     
     try {
       // 2. Check Uniqueness
+      console.log('[Diagnostics] Sending Firestore request: checking usernameExists for:', this.currentInput);
       const exists = await this.firebaseService.usernameExists(this.currentInput);
+      console.log('[Diagnostics] Firestore response: usernameExists =', exists);
+
       if (exists) {
+        console.log('[Diagnostics] Validation failed: Username is already taken.');
         this.statusText.setText('Username taken! Try another.');
         this.statusText.setColor(COLORS_HEX.SPIKE_RED);
         return;
@@ -110,19 +147,44 @@ export class UsernameScene extends Phaser.Scene {
         achievements: []
       };
 
+      console.log('[Diagnostics] Sending Firestore request: createUser with payload:', JSON.stringify(userData));
       const newUser = await this.firebaseService.createUser(userData);
+      console.log('[Diagnostics] Firestore response: createUser succeeded. Result user data:', JSON.stringify(newUser));
       
       // 4. Save locally
       if (this.saveSystem) {
+        console.log('[Diagnostics] Saving user data locally in SaveSystem.');
         this.saveSystem.data = newUser;
         this.saveSystem.save(); // Persist
+      } else {
+        console.warn('[Diagnostics] SaveSystem is not available on registry.');
       }
 
+      console.log('[Diagnostics] Successfully signed in and created user. Transitioning to main menu...');
       // Transition to main menu
       this.scene.start(SCENES.MAIN_MENU);
 
     } catch (error) {
-      console.error(error);
+      console.error('[Diagnostics] Exception caught during username submission process:', error);
+      if (error) {
+        console.error('[Diagnostics] Error details:', {
+          name: error.name,
+          code: error.code, // Firebase standard error code
+          message: error.message,
+          stack: error.stack
+        });
+        
+        // Log all properties of the error object
+        try {
+          const keys = Object.getOwnPropertyNames(error);
+          const errObj = {};
+          keys.forEach(k => { errObj[k] = error[k]; });
+          console.error('[Diagnostics] Fully inspected error properties:', JSON.stringify(errObj, null, 2));
+        } catch (e) {
+          console.error('[Diagnostics] Failed to serialize error object properties:', e);
+        }
+      }
+
       this.statusText.setText('Network error. Try again.');
       this.statusText.setColor(COLORS_HEX.SPIKE_RED);
     }
