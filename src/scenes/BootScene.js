@@ -24,6 +24,11 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
+    // Set base URL from Vite to support GitHub Pages subfolder hosting
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) {
+      this.load.setBaseURL(import.meta.env.BASE_URL);
+    }
+
     // Basic loading bar
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
