@@ -23,8 +23,10 @@ service cloud.firestore {
     // Document ID = normalized username (lowercase)
     // Field 'uid' stores the anonymous auth UID for ownership check
     match /users/{username} {
-      // Only the owner (matching uid) may read their own document
-      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      // Allow 'get' so any authenticated user can check if a username exists
+      allow get: if request.auth != null;
+      // Restrict 'list' (queries) to the owner only
+      allow list: if request.auth != null && request.auth.uid == resource.data.uid;
 
       // Allow create only when the document doesn't yet exist
       allow create: if request.auth != null
