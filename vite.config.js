@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   // Base public path when served in development or production.
   // Using relative path './' so it works on GitHub Pages without knowing the repo name.
-  base: './',
+  base: '/yellow-duck-trust-nothing/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
