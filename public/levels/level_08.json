@@ -1,0 +1,78 @@
+{
+  "level": 8,
+  "name": "Reverse Logic",
+  "spawn": {
+    "x": 100,
+    "y": 450
+  },
+  "goal": {
+    "x": 2400,
+    "y": 480
+  },
+  "platforms": [
+    {
+      "x": 400,
+      "y": 550,
+      "width": 800,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 2200,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 1200,
+      "y": 900,
+      "width": 400,
+      "height": 64,
+      "texture": "GroundTile",
+      "properties": {
+        "secret": true
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "FallingPlatformUp",
+      "x": 1000,
+      "y": 550,
+      "width": 200,
+      "height": 64
+    },
+    {
+      "type": "FakeSpike",
+      "x": 1100,
+      "y": 502
+    },
+    {
+      "type": "FakeFloor",
+      "x": 1200,
+      "y": 550,
+      "width": 400,
+      "height": 64
+    },
+    {
+      "type": "SecretArea",
+      "x": 1200,
+      "y": 850,
+      "width": 400,
+      "height": 100
+    }
+  ],
+  "checkpoints": [
+    {
+      "x": 600,
+      "y": 450,
+      "id": "cp_1"
+    },
+    {
+      "x": 1800,
+      "y": 450,
+      "id": "cp_2"
+    }
+  ]
+}

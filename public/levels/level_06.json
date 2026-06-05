@@ -1,0 +1,80 @@
+{
+  "level": 6,
+  "name": "Fake Exit",
+  "spawn": {
+    "x": 100,
+    "y": 450
+  },
+  "goal": {
+    "x": 200,
+    "y": 150
+  },
+  "platforms": [
+    {
+      "x": 800,
+      "y": 550,
+      "width": 1600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 200,
+      "y": 250,
+      "width": 200,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 1500,
+      "y": 800,
+      "width": 400,
+      "height": 64,
+      "texture": "GroundTile",
+      "properties": {
+        "secret": true
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "FakeExit",
+      "x": 1400,
+      "y": 480
+    },
+    {
+      "type": "InvisiblePlatform",
+      "x": 1000,
+      "y": 400,
+      "width": 100,
+      "height": 32
+    },
+    {
+      "type": "InvisiblePlatform",
+      "x": 600,
+      "y": 300,
+      "width": 100,
+      "height": 32
+    },
+    {
+      "type": "FakeFloor",
+      "x": 1500,
+      "y": 550,
+      "width": 200,
+      "height": 64
+    },
+    {
+      "type": "SecretArea",
+      "x": 1500,
+      "y": 750,
+      "width": 200,
+      "height": 100
+    }
+  ],
+  "checkpoints": [
+    {
+      "x": 800,
+      "y": 450,
+      "id": "cp_1"
+    }
+  ]
+}

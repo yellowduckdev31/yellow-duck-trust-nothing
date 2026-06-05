@@ -1,0 +1,105 @@
+{
+  "level": 9,
+  "name": "Multi Trap",
+  "spawn": {
+    "x": 100,
+    "y": 450
+  },
+  "goal": {
+    "x": 3000,
+    "y": 480
+  },
+  "platforms": [
+    {
+      "x": 300,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 1200,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 2100,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 2900,
+      "y": 550,
+      "width": 400,
+      "height": 64,
+      "texture": "GroundTile"
+    }
+  ],
+  "traps": [
+    {
+      "type": "StaticSpike",
+      "x": 400,
+      "y": 502
+    },
+    {
+      "type": "HiddenSpike",
+      "x": 500,
+      "y": 502
+    },
+    {
+      "type": "FakeFloor",
+      "x": 1000,
+      "y": 550,
+      "width": 200,
+      "height": 64
+    },
+    {
+      "type": "MovingPlatform",
+      "x": 750,
+      "y": 550,
+      "width": 200,
+      "height": 64,
+      "dx": 0,
+      "dy": -200,
+      "speed": 150
+    },
+    {
+      "type": "StaticSpike",
+      "x": 1300,
+      "y": 502
+    },
+    {
+      "type": "HiddenSpike",
+      "x": 1400,
+      "y": 502
+    },
+    {
+      "type": "FakeExit",
+      "x": 2200,
+      "y": 480
+    },
+    {
+      "type": "InvisiblePlatform",
+      "x": 2500,
+      "y": 550,
+      "width": 200,
+      "height": 64
+    }
+  ],
+  "checkpoints": [
+    {
+      "x": 1100,
+      "y": 450,
+      "id": "cp_1"
+    },
+    {
+      "x": 2000,
+      "y": 450,
+      "id": "cp_2"
+    }
+  ]
+}

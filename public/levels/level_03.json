@@ -1,0 +1,60 @@
+{
+  "level": 3,
+  "name": "Fake Floor",
+  "spawn": {
+    "x": 100,
+    "y": 450
+  },
+  "goal": {
+    "x": 1800,
+    "y": 480
+  },
+  "platforms": [
+    {
+      "x": 300,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 1500,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 900,
+      "y": 800,
+      "width": 400,
+      "height": 64,
+      "texture": "GroundTile",
+      "properties": {
+        "secret": true
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "FakeFloor",
+      "x": 900,
+      "y": 550,
+      "width": 600,
+      "height": 64
+    },
+    {
+      "type": "StaticSpike",
+      "x": 1400,
+      "y": 502
+    },
+    {
+      "type": "SecretArea",
+      "x": 900,
+      "y": 750,
+      "width": 400,
+      "height": 100
+    }
+  ],
+  "checkpoints": []
+}

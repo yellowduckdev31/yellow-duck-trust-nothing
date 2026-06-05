@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid",
+        "username": {
+          ".write": "!data.exists()"
+        }
+      }
+    },
+    "leaderboard": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "statistics": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "achievements": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    }
+  }
+}

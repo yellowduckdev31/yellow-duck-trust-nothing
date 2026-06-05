@@ -1,0 +1,62 @@
+{
+  "level": 5,
+  "name": "Moving Platform",
+  "spawn": {
+    "x": 100,
+    "y": 450
+  },
+  "goal": {
+    "x": 2400,
+    "y": 480
+  },
+  "platforms": [
+    {
+      "x": 300,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    },
+    {
+      "x": 2200,
+      "y": 550,
+      "width": 600,
+      "height": 64,
+      "texture": "GroundTile"
+    }
+  ],
+  "traps": [
+    {
+      "type": "MovingPlatform",
+      "x": 800,
+      "y": 550,
+      "width": 200,
+      "height": 64,
+      "dx": 400,
+      "dy": 0,
+      "speed": 100
+    },
+    {
+      "type": "MovingPlatform",
+      "x": 1500,
+      "y": 550,
+      "width": 200,
+      "height": 64,
+      "dx": 0,
+      "dy": -200,
+      "speed": 150
+    },
+    {
+      "type": "StaticSpike",
+      "x": 2000,
+      "y": 502
+    }
+  ],
+  "checkpoints": [
+    {
+      "x": 500,
+      "y": 450,
+      "id": "cp_1"
+    }
+  ]
+}
