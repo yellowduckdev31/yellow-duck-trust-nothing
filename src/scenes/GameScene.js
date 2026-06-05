@@ -185,7 +185,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.deathSystem.execute(deathType, () => {
+    this.deathSystem.execute(deathType, player.getSprite(), () => {
       this.playerSystem.respawn(this.currentCheckpoint.x, this.currentCheckpoint.y);
       this.trapSystem.reset(); // Reset traps to initial state
     });

@@ -13,9 +13,11 @@ export const GAME_CONFIG = {
 
   // Section 29 — Physics
   PHYSICS: {
-    GRAVITY: 1000,
-    MOVE_SPEED: 220,
-    JUMP_FORCE: -450,
+    GRAVITY: 1500,
+    MOVE_SPEED: 350,
+    ACCELERATION: 2500,
+    DRAG: 2000,
+    JUMP_FORCE: -600,
   },
 
   // Section 28 — Camera

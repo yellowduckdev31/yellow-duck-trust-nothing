@@ -50,15 +50,15 @@ export class PlayerSystem {
 
     // Horizontal Movement
     if (input.left) {
-      sprite.setVelocityX(-GAME_CONFIG.PHYSICS.MOVE_SPEED);
+      sprite.setAccelerationX(-GAME_CONFIG.PHYSICS.ACCELERATION);
       sprite.setFlipX(true);
       // if (isGrounded) sprite.anims.play('walk', true);
     } else if (input.right) {
-      sprite.setVelocityX(GAME_CONFIG.PHYSICS.MOVE_SPEED);
+      sprite.setAccelerationX(GAME_CONFIG.PHYSICS.ACCELERATION);
       sprite.setFlipX(false);
       // if (isGrounded) sprite.anims.play('walk', true);
     } else {
-      sprite.setVelocityX(0);
+      sprite.setAccelerationX(0);
       // if (isGrounded) sprite.anims.play('idle', true);
     }
 

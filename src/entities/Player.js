@@ -44,6 +44,8 @@ export class Player {
     
     // Enable arcade physics properties
     this.sprite.setCollideWorldBounds(true);
+    this.sprite.setMaxVelocity(GAME_CONFIG.PHYSICS.MOVE_SPEED, 1500);
+    this.sprite.setDragX(GAME_CONFIG.PHYSICS.DRAG);
     
     // Animations will be created globally in BootScene typically, 
     // but the sprite will play them here.
