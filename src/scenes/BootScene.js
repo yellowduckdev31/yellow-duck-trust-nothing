@@ -61,12 +61,13 @@ export class BootScene extends Phaser.Scene {
     //    If a real PNG loads successfully below, Phaser replaces the canvas texture.
     this.generatePlaceholderTextures();
 
-    // 2. Load real character PNG assets (present on disk)
-    this.load.image('YD_Idle',     'assets/character/YD_Idle.png');
-    this.load.image('YD_Walk',     'assets/character/YD_Walk.png');
-    this.load.image('YD_Jump',     'assets/character/YD_Jump.png');
-    this.load.image('YD_Fall',     'assets/character/YD_Fall.png');
-    this.load.image('YD_Death',    'assets/character/YD_Death.png');
+    // 2. Load character sprite sheets (48x64 per frame)
+    this.load.spritesheet('YD_Idle',  'assets/character/YD_Idle_Sheet.png',  { frameWidth: 48, frameHeight: 64 });
+    this.load.spritesheet('YD_Walk',  'assets/character/YD_Walk_Sheet.png',  { frameWidth: 48, frameHeight: 64 });
+    this.load.spritesheet('YD_Jump',  'assets/character/YD_Jump_Sheet.png',  { frameWidth: 48, frameHeight: 64 });
+    this.load.spritesheet('YD_Fall',  'assets/character/YD_Fall_Sheet.png',  { frameWidth: 48, frameHeight: 64 });
+    this.load.spritesheet('YD_Death', 'assets/character/YD_Death_Sheet.png', { frameWidth: 48, frameHeight: 64 });
+    // Portrait and Menu are single images
     this.load.image('YD_Portrait', 'assets/character/YD_Portrait.png');
     this.load.image('YD_Menu',     'assets/character/YD_Menu.png');
 
@@ -95,12 +96,15 @@ export class BootScene extends Phaser.Scene {
   async create() {
     console.log("Booting game and initializing systems...");
 
-    // 1. Initialize Firebase
+    // 1. Define character animations from loaded sprite sheets
+    this.createAnimations();
+
+    // 2. Initialize Firebase
     const firebaseService = new FirebaseService();
     // Use real config from firebase-config.js
     await firebaseService.initialize(firebaseConfig).catch(e => console.warn("Firebase Init Failed, continuing in offline mode.", e));
 
-    // 2. Initialize other systems
+    // 3. Initialize other systems
     const saveSystem = new SaveSystem(firebaseService);
     const savedUsername = saveSystem.getUsername();
     if (savedUsername) {
@@ -114,14 +118,61 @@ export class BootScene extends Phaser.Scene {
     const leaderboardSystem = new LeaderboardSystem(firebaseService);
     const achievementSystem = new AchievementSystem();
 
-    // 3. Store globally in Phaser Registry
+    // 4. Store globally in Phaser Registry
     this.registry.set('firebaseService', firebaseService);
     this.registry.set('saveSystem', saveSystem);
     this.registry.set('leaderboardSystem', leaderboardSystem);
     this.registry.set('achievementSystem', achievementSystem);
 
-    // 4. Transition to UsernameScene
+    // 5. Transition to UsernameScene
     this.scene.start(SCENES.USERNAME);
+  }
+
+  createAnimations() {
+    // Guard: skip if animations already exist (e.g. hot reload)
+    if (this.anims.exists('idle')) return;
+
+    // Idle — 4 frames, gentle breathing loop
+    this.anims.create({
+      key: 'idle',
+      frames: this.anims.generateFrameNumbers('YD_Idle', { start: 0, end: 3 }),
+      frameRate: 6,
+      repeat: -1,
+    });
+
+    // Walk — 8 frames, full waddle cycle
+    this.anims.create({
+      key: 'walk',
+      frames: this.anims.generateFrameNumbers('YD_Walk', { start: 0, end: 7 }),
+      frameRate: 12,
+      repeat: -1,
+    });
+
+    // Jump — 2 frames: crouch → airborne
+    this.anims.create({
+      key: 'jump',
+      frames: this.anims.generateFrameNumbers('YD_Jump', { start: 0, end: 1 }),
+      frameRate: 8,
+      repeat: 0,
+    });
+
+    // Fall — 2 frames: panic falling loop
+    this.anims.create({
+      key: 'fall',
+      frames: this.anims.generateFrameNumbers('YD_Fall', { start: 0, end: 1 }),
+      frameRate: 6,
+      repeat: -1,
+    });
+
+    // Death — 4 frames: hit → stumble → falling → collapsed
+    this.anims.create({
+      key: 'death',
+      frames: this.anims.generateFrameNumbers('YD_Death', { start: 0, end: 3 }),
+      frameRate: 8,
+      repeat: 0,
+    });
+
+    console.log('Character animations registered: idle, walk, jump, fall, death');
   }
 
   generatePlaceholderTextures() {

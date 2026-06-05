@@ -34,8 +34,8 @@ export class Player {
    * Create the player sprite and physics body.
    */
   create(x, y) {
-    // Note: 'YD_Idle' must be loaded in BootScene
-    this.sprite = this.scene.physics.add.sprite(x, y, 'YD_Idle');
+    // 'YD_Idle' is a spritesheet loaded in BootScene; start on frame 0
+    this.sprite = this.scene.physics.add.sprite(x, y, 'YD_Idle', 0);
     
     // Set size 48x64 (Section 23)
     this.sprite.setDisplaySize(GAME_CONFIG.CHARACTER_SIZE.width, GAME_CONFIG.CHARACTER_SIZE.height);

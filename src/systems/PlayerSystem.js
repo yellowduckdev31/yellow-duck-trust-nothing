@@ -52,14 +52,14 @@ export class PlayerSystem {
     if (input.left) {
       sprite.setAccelerationX(-GAME_CONFIG.PHYSICS.ACCELERATION);
       sprite.setFlipX(true);
-      // if (isGrounded) sprite.anims.play('walk', true);
+      if (isGrounded) sprite.anims.play('walk', true);
     } else if (input.right) {
       sprite.setAccelerationX(GAME_CONFIG.PHYSICS.ACCELERATION);
       sprite.setFlipX(false);
-      // if (isGrounded) sprite.anims.play('walk', true);
+      if (isGrounded) sprite.anims.play('walk', true);
     } else {
       sprite.setAccelerationX(0);
-      // if (isGrounded) sprite.anims.play('idle', true);
+      if (isGrounded) sprite.anims.play('idle', true);
     }
 
     // Jumping
@@ -70,9 +70,9 @@ export class PlayerSystem {
     // Mid-air animations
     if (!isGrounded) {
       if (sprite.body.velocity.y < 0) {
-        // sprite.anims.play('jump', true);
+        sprite.anims.play('jump', true);
       } else {
-        // sprite.anims.play('fall', true);
+        sprite.anims.play('fall', true);
       }
     }
   }
@@ -91,7 +91,7 @@ export class PlayerSystem {
     const sprite = this.player.getSprite();
     sprite.setVelocity(0, 0);
     sprite.body.allowGravity = false; // Stop falling during death sequence
-    // sprite.anims.play('death', true);
+    sprite.anims.play('death', true);
 
     return remainingLives;
   }
@@ -111,7 +111,7 @@ export class PlayerSystem {
     sprite.setVelocity(0, 0);
     sprite.body.allowGravity = true;
     sprite.setAlpha(1); // Reset alpha in case of fade effects
-    // sprite.anims.play('idle', true);
+    sprite.anims.play('idle', true);
 
     // Optional: Add brief invincibility/flicker effect here
   }
