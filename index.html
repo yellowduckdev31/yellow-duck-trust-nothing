@@ -1,681 +1,75 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arief Putra Utama — Yellow Duck</title>
-<style>
-  :root{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--text:#f0ede8;--muted:#666;--accent:#c8a96e;--border:#222;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{background:var(--bg);color:var(--text);font-family:'Helvetica Neue',sans-serif;overflow-x:hidden;}
-
-  /* ── WELCOME ── */
-  #welcome{position:fixed;inset:0;z-index:9999;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;padding:2rem;transition:opacity 0.8s ease,visibility 0.8s ease;}
-  #welcome.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-  .wl-logo{width:100px;height:100px;}
-  .wl-logo svg{width:100%;height:100%;}
-  .wl-title{font-size:clamp(1.4rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.02em;overflow:hidden;white-space:nowrap;border-right:3px solid var(--accent);animation:typewriter 2s steps(22) forwards,blink 0.7s step-end infinite;text-align:center;}
-  @keyframes typewriter{from{width:0}to{width:100%}}
-  @keyframes blink{50%{border-color:transparent}}
-  .wl-sub{font-size:0.82rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;opacity:0;animation:fadeUp 0.6s ease 2.2s forwards;text-align:center;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  .wl-form{display:flex;flex-direction:column;align-items:center;gap:0.8rem;opacity:0;animation:fadeUp 0.6s ease 2.8s forwards;width:100%;max-width:300px;}
-  .wl-form label{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
-  .wl-form input{background:transparent;border:none;border-bottom:1px solid var(--accent);color:var(--text);font-size:1rem;padding:0.5rem 0.8rem;text-align:center;outline:none;width:100%;font-family:inherit;}
-  .wl-form input::placeholder{color:var(--muted);}
-  .wl-btn{width:100%;padding:0.75rem 2rem;background:var(--accent);color:#000;font-size:0.78rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;transition:background 0.3s;}
-  .wl-btn:hover{background:#e0bf80;}
-
-  /* ── NAV ── */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:rgba(10,10,10,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
-  .nav-logo{font-size:0.95rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text);text-decoration:none;flex-shrink:0;}
-  .nav-links{display:flex;gap:1.5rem;align-items:center;}
-  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.3s;}
-  .nav-links a:hover{color:var(--text);}
-  .theme-btn{display:flex;align-items:center;gap:0.4rem;background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.35rem 0.75rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:inherit;white-space:nowrap;}
-  .theme-btn:hover{border-color:var(--accent);color:var(--accent);}
-  /* Mobile nav hamburger */
-  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:0.3rem;flex-direction:column;gap:5px;}
-  .nav-toggle span{display:block;width:22px;height:2px;background:var(--text);transition:all 0.3s;}
-  .nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
-  .nav-toggle.open span:nth-child(2){opacity:0;}
-  .nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
-  .nav-mobile{display:none;position:fixed;top:57px;left:0;right:0;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);flex-direction:column;padding:1.5rem 2rem;gap:1.2rem;z-index:99;}
-  .nav-mobile.open{display:flex;}
-  .nav-mobile a{color:var(--muted);text-decoration:none;font-size:0.9rem;letter-spacing:0.08em;text-transform:uppercase;padding:0.3rem 0;}
-  .nav-mobile a:hover{color:var(--text);}
-  .nav-mobile .theme-btn{align-self:flex-start;margin-top:0.5rem;}
-
-  /* ── HERO ── */
-  #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:3rem 2rem 5rem;position:relative;overflow:hidden;}
-  .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#111 50%,#0d0d0d 100%);}
-  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.3;}
-  .hero-content{position:relative;z-index:2;}
-  .hero-label{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.2rem;}
-  .hero-name{font-size:clamp(2.8rem,10vw,9rem);font-weight:800;line-height:0.9;letter-spacing:-0.03em;margin-bottom:1.2rem;}
-  .hero-tagline{font-size:clamp(0.95rem,2vw,1.2rem);color:var(--muted);max-width:560px;line-height:1.6;margin-bottom:2.5rem;}
-  .hero-cta{display:flex;gap:1rem;flex-wrap:wrap;}
-  .btn{display:inline-block;padding:0.85rem 1.8rem;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;cursor:pointer;border:none;}
-  .btn-primary{background:var(--accent);color:#000;font-weight:700;}
-  .btn-primary:hover{background:#e0bf80;}
-  .btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);}
-  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
-  .hero-scroll{position:absolute;bottom:2rem;right:2rem;writing-mode:vertical-rl;font-size:0.68rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:0.8rem;}
-  .hero-scroll::after{content:'';width:1px;height:50px;background:var(--muted);}
-
-  /* ── MARQUEE ── */
-  .marquee-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0.85rem 0;background:var(--bg2);}
-  .marquee-track{display:flex;gap:2.5rem;animation:marquee 22s linear infinite;white-space:nowrap;}
-  .marquee-item{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:0.8rem;}
-  .marquee-item::after{content:'✦';color:var(--accent);}
-  @keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%)}}
-
-  section{padding:5rem 2rem;}
-  .section-label{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:0.8rem;}
-  .section-title{font-size:clamp(1.8rem,5vw,4rem);font-weight:800;line-height:1;letter-spacing:-0.02em;margin-bottom:3rem;}
-  .section-title span{color:var(--muted);}
-
-  /* ── PROJECTS ── */
-  #projects{background:var(--bg);}
-  .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5px;background:var(--border);}
-  .project-card{background:var(--bg);overflow:hidden;cursor:pointer;position:relative;aspect-ratio:4/3;}
-  .project-thumb{width:100%;height:100%;object-fit:cover;background:var(--bg3);display:flex;align-items:center;justify-content:center;}
-  .project-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 60%);opacity:0;transition:opacity 0.4s;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;}
-  .project-card:hover .project-overlay{opacity:1;}
-  .project-year{font-size:0.68rem;letter-spacing:0.15em;color:var(--accent);margin-bottom:0.4rem;}
-  .project-name{font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;}
-  .project-desc{font-size:0.8rem;color:#aaa;line-height:1.5;}
-  .project-tag{display:inline-block;padding:0.25rem 0.7rem;border:1px solid var(--border);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:0.7rem;}
-  .modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;padding:1rem;}
-  .modal.open{display:flex;}
-  .modal-inner{width:100%;max-width:900px;position:relative;}
-  .modal-close{position:absolute;top:-2.5rem;right:0;font-size:0.78rem;letter-spacing:0.15em;color:var(--muted);cursor:pointer;text-transform:uppercase;}
-  .modal-video{width:100%;aspect-ratio:16/9;background:#000;}
-  .modal-video iframe{width:100%;height:100%;border:none;}
-  .modal-info{padding:1rem 0;}
-  .modal-title{font-size:1.3rem;font-weight:700;margin-bottom:0.4rem;}
-  .modal-desc{color:var(--muted);line-height:1.7;font-size:0.85rem;}
-
-  /* ── EXPERIENCE ── */
-  #experience{background:var(--bg2);}
-  .timeline{display:flex;flex-direction:column;}
-  .timeline-item{display:grid;grid-template-columns:130px 1px 1fr;gap:0 1.5rem;padding:2rem 0;border-bottom:1px solid var(--border);}
-  .timeline-year{font-size:0.7rem;letter-spacing:0.06em;color:var(--muted);padding-top:0.3rem;line-height:1.5;}
-  .timeline-line{background:var(--border);position:relative;}
-  .timeline-line::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);position:absolute;top:0.3rem;left:50%;transform:translateX(-50%);}
-  .timeline-role{font-size:1rem;font-weight:700;margin-bottom:0.25rem;}
-  .timeline-company{font-size:0.8rem;color:var(--accent);margin-bottom:0.6rem;letter-spacing:0.04em;}
-  .timeline-desc{font-size:0.83rem;color:var(--muted);line-height:1.7;}
-
-  /* ── CERTIFICATES ── */
-  #certificates{background:var(--bg);}
-  .cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--border);}
-  .cert-card{background:var(--bg);padding:1rem 1rem 1.3rem;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden;}
-  .cert-card:hover{background:var(--bg2);}
-  .cert-icon{font-size:1rem;margin-bottom:0.6rem;display:block;}
-  .cert-name{font-size:0.78rem;font-weight:700;margin-bottom:0.2rem;line-height:1.3;}
-  .cert-issuer{font-size:0.68rem;color:var(--accent);margin-bottom:0.35rem;letter-spacing:0.03em;}
-  .cert-date{font-size:0.65rem;color:var(--muted);}
-  .cert-arrow{position:absolute;bottom:0.7rem;right:0.8rem;font-size:0.85rem;color:var(--muted);transition:transform 0.3s,color 0.3s;}
-  .cert-card:hover .cert-arrow{transform:translate(3px,-3px);color:var(--accent);}
-  .cert-lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.96);align-items:center;justify-content:center;flex-direction:column;padding:1rem;}
-  .cert-lightbox.open{display:flex;}
-  .cert-lightbox-inner{position:relative;max-width:90vw;max-height:78vh;user-select:none;}
-  .cert-lightbox-inner img{max-width:100%;max-height:78vh;object-fit:contain;display:block;pointer-events:none;-webkit-user-drag:none;user-select:none;}
-  .cert-lightbox-inner::after{content:'';position:absolute;inset:0;z-index:2;cursor:default;}
-  .cert-lb-close{margin-top:1rem;font-size:0.75rem;letter-spacing:0.15em;color:var(--muted);cursor:pointer;text-transform:uppercase;transition:color 0.2s;}
-  .cert-lb-close:hover{color:var(--text);}
-  .cert-lb-name{margin-top:0.6rem;font-size:0.78rem;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;text-align:center;}
-  .cert-no-save{position:absolute;top:0;left:0;right:0;bottom:0;z-index:3;}
-
-  /* ── ABOUT ── */
-  #about{background:var(--bg2);}
-  .about-inner{display:grid;grid-template-columns:1fr 1.6fr;gap:4rem;align-items:start;}
-  .about-photo{aspect-ratio:3/4;background:var(--bg3);overflow:hidden;position:relative;}
-  .about-photo img{width:100%;height:100%;object-fit:cover;display:block;}
-  .about-photo .photo-fallback{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--muted);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;}
-  .about-photo .photo-fallback span{font-size:2.5rem;}
-  .about-bio{font-size:0.95rem;line-height:1.8;color:#bbb;margin-bottom:2.5rem;}
-  .skills-title{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem;}
-  .skills-list{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:2rem;}
-  .skill-tag{padding:0.4rem 0.85rem;border:1px solid var(--border);font-size:0.72rem;letter-spacing:0.06em;color:var(--muted);transition:all 0.2s;}
-  .skill-tag:hover{border-color:var(--accent);color:var(--accent);}
-  .hobbies-list{display:flex;flex-wrap:wrap;gap:0.4rem;}
-
-  /* ── GALLERY ── */
-  #gallery{background:var(--bg);}
-  .gallery-masonry{columns:3;column-gap:1px;background:var(--border);}
-  .gallery-item{break-inside:avoid;overflow:hidden;cursor:pointer;position:relative;display:block;margin-bottom:1px;}
-  .gallery-item img{width:100%;display:block;transition:transform 0.6s ease;}
-  .gallery-item:hover img{transform:scale(1.04);}
-  .gallery-item .photo-fallback{width:100%;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.4rem;color:var(--muted);font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;padding:2rem 1rem;}
-  .gallery-item .photo-fallback span{font-size:1.6rem;}
-  .lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.97);align-items:center;justify-content:center;padding:1rem;}
-  .lightbox.open{display:flex;}
-  .lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;}
-  .lb-close{position:fixed;top:1.5rem;right:1.5rem;font-size:0.78rem;letter-spacing:0.15em;color:var(--muted);cursor:pointer;text-transform:uppercase;}
-
-  /* ── BLOG ── */
-  #blog{background:var(--bg2);}
-  .blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1px;background:var(--border);}
-  .blog-card{background:var(--bg2);padding:1.8rem;cursor:pointer;transition:background 0.3s;position:relative;}
-  .blog-card:hover{background:var(--bg3);}
-  .blog-tag{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.7rem;display:block;}
-  .blog-title{font-size:1.05rem;font-weight:700;line-height:1.3;margin-bottom:0.7rem;}
-  .blog-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem;}
-  .blog-meta{font-size:0.7rem;color:var(--muted);letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;}
-  .blog-arrow{font-size:1rem;color:var(--muted);transition:transform 0.3s,color 0.3s;}
-  .blog-card:hover .blog-arrow{transform:translate(4px,-4px);color:var(--accent);}
-  .blog-modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.95);align-items:flex-start;justify-content:center;overflow-y:auto;padding:5rem 1rem 3rem;}
-  .blog-modal.open{display:flex;}
-  .blog-modal-inner{width:100%;max-width:700px;background:var(--bg2);padding:2.5rem 2rem;position:relative;}
-  .blog-modal-close{position:absolute;top:1.2rem;right:1.2rem;font-size:0.75rem;letter-spacing:0.15em;color:var(--muted);cursor:pointer;text-transform:uppercase;}
-  .blog-modal-tag{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.8rem;display:block;}
-  .blog-modal-title{font-size:clamp(1.3rem,3vw,2rem);font-weight:800;line-height:1.1;margin-bottom:0.8rem;}
-  .blog-modal-meta{font-size:0.73rem;color:var(--muted);margin-bottom:1.8rem;padding-bottom:1.8rem;border-bottom:1px solid var(--border);}
-  .blog-modal-body{font-size:0.92rem;line-height:1.9;color:#bbb;}
-  .blog-modal-body h3{font-size:1rem;color:var(--text);margin:1.8rem 0 0.7rem;font-weight:700;}
-  .blog-modal-body p{margin-bottom:1rem;}
-  .blog-modal-body code{background:var(--bg3);padding:0.12rem 0.45rem;font-size:0.82rem;color:var(--accent);}
-
-  /* ── CONTACT ── */
-  #contact{background:var(--bg);text-align:center;}
-  .contact-inner{max-width:700px;margin:0 auto;}
-  .contact-big{font-size:clamp(2rem,7vw,6rem);font-weight:800;line-height:1;letter-spacing:-0.03em;margin-bottom:1.5rem;}
-  .contact-sub{font-size:0.95rem;color:var(--muted);margin-bottom:2.5rem;line-height:1.6;}
-  .contact-links{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap;margin-bottom:3rem;}
-  .contact-link-item{display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--accent);text-decoration:none;transition:opacity 0.2s;}
-  .contact-link-item:hover{opacity:0.65;}
-  .contact-link-item svg{width:18px;height:18px;fill:var(--accent);flex-shrink:0;}
-  .contact-divider{width:1px;height:24px;background:var(--border);}
-  .socials{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:3rem;}
-  .social-link{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
-  .social-link:hover{color:var(--text);}
-  .visitor-wrap{border-top:1px solid var(--border);padding-top:1.8rem;}
-  .visitor-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.7rem;}
-  .visitor-ticker{overflow:hidden;white-space:nowrap;}
-  .visitor-track{display:inline-flex;gap:2rem;animation:visitorScroll 18s linear infinite;}
-  .visitor-name{font-size:0.75rem;color:var(--accent);letter-spacing:0.06em;}
-  .visitor-name::before{content:'👤 ';}
-  @keyframes visitorScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
-  footer{padding:1.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;}
-  .footer-name{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
-  .footer-copy{font-size:0.72rem;color:var(--border);}
-
-  #backToTop{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:42px;height:42px;background:var(--accent);color:#000;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;opacity:0;pointer-events:none;transition:opacity 0.3s,background 0.3s;}
-  #backToTop.show{opacity:1;pointer-events:all;}
-  #backToTop:hover{background:#e0bf80;}
-
-  .fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease;}
-  .fade-in.visible{opacity:1;transform:none;}
-
-  /* ── LIGHT MODE ── */
-  body.light-mode{--bg:#fdfcfb;--bg2:#f0eeeb;--bg3:#e4e2de;--text:#1a1a1a;--muted:#888;--accent:#b08d4f;--border:#ddd;}
-  body.light-mode .hero-bg{background:linear-gradient(135deg,#fdfcfb 0%,#f0eeeb 50%,#ececec 100%);}
-  body.light-mode nav{background:rgba(253,252,251,0.92);}
-  body.light-mode .nav-mobile{background:rgba(253,252,251,0.98);}
-  body.light-mode .about-bio,body.light-mode .blog-modal-body{color:#444;}
-
-  /* ── RESPONSIVE ── */
-  @media(max-width:768px){
-    nav{padding:0.9rem 1.2rem;}
-    .nav-links{display:none;}
-    .nav-toggle{display:flex;}
-    section{padding:4rem 1.2rem;}
-    .hero-name{font-size:2.8rem;}
-    .hero-scroll{display:none;}
-    .about-inner{grid-template-columns:1fr;}
-    .gallery-masonry{columns:2;}
-    .timeline-item{grid-template-columns:72px 1px 1fr;gap:0 1rem;}
-    .timeline-year{font-size:0.65rem;}
-    .contact-links{flex-direction:column;gap:1rem;align-items:flex-start;padding:0 1rem;}
-    .contact-divider{display:none;}
-    .contact-links{align-items:center;}
-    .blog-grid{grid-template-columns:1fr;}
-    .cert-grid{grid-template-columns:repeat(2,1fr);}
-    .projects-grid{grid-template-columns:1fr;}
-    .blog-modal-inner{padding:2rem 1rem;}
-    #backToTop{bottom:1rem;right:1rem;width:38px;height:38px;}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="Yellow Duck: Trust Nothing — A 2D troll platformer where nothing is what it seems. Play as Yellow Duck and survive traps, fake floors, and deception.">
+  <title>Yellow Duck: Trust Nothing</title>
+  <style>
+    /* Section 25/26 — Dark theme, no rounded corners */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0D0D0D;
+    }
+    #game-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    /* Section 38 — Orientation: Landscape preferred */
+    #rotate-message {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0D0D0D;
+      color: #FFFFFF;
+      font-family: monospace;
+      font-size: 18px;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 9999;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #rotate-message span {
+      font-size: 48px;
+    }
+    @media (orientation: portrait) {
+      #rotate-message {
+        display: flex;
+      }
+      #game-container {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="game-container"></div>
 
-<!-- ══════════ WELCOME ══════════ -->
-<div id="welcome">
-  <div class="wl-logo">
-    <!-- LOGO: Ganti SVG ini dengan <img src="assets/logo.png" style="width:100px;height:100px;object-fit:contain"> -->
-    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="60" cy="60" r="58" fill="#111" stroke="#c8a96e" stroke-width="2"/>
-      <ellipse cx="60" cy="72" rx="28" ry="20" fill="#c8a96e"/>
-      <ellipse cx="60" cy="52" rx="18" ry="18" fill="#c8a96e"/>
-      <ellipse cx="60" cy="50" rx="14" ry="14" fill="#111"/>
-      <circle cx="55" cy="47" r="3" fill="#f0ede8"/>
-      <circle cx="65" cy="47" r="3" fill="#f0ede8"/>
-      <ellipse cx="78" cy="68" rx="12" ry="6" fill="#e0a040" transform="rotate(-20 78 68)"/>
-      <text x="60" y="105" text-anchor="middle" font-size="9" fill="#c8a96e" font-family="Helvetica Neue" font-weight="700" letter-spacing="2">YELLOW DUCK</text>
-    </svg>
+  <!-- Section 38 — Rotate Device Message -->
+  <div id="rotate-message">
+    <span>🔄</span>
+    <p>Please rotate your device to landscape mode.</p>
   </div>
-  <div class="wl-title">Welcome to my Portfolio</div>
-  <div class="wl-sub">Arief Putra Utama · Yellow Duck</div>
-  <div class="wl-form">
-    <label for="visitorInput">Siapa nama kamu?</label>
-    <input id="visitorInput" type="text" placeholder="Masukkan namamu..." maxlength="30" autocomplete="off">
-    <button class="wl-btn" onclick="enterSite()">Masuk ✦</button>
-  </div>
-</div>
 
-<!-- ══════════ NAV ══════════ -->
-<nav>
-  <a href="#hero" class="nav-logo">APU</a>
-  <div class="nav-links">
-    <a href="#projects">Work</a>
-    <a href="#experience">Experience</a>
-    <a href="#blog">Blog</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-    <button id="themeToggle" class="theme-btn"><span class="tb-icon">☀️</span><span class="tb-txt"> Light Mode</span></button>
-  </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-<div class="nav-mobile" id="navMobile">
-  <a href="#projects" onclick="closeNav()">Work</a>
-  <a href="#experience" onclick="closeNav()">Experience</a>
-  <a href="#blog" onclick="closeNav()">Blog</a>
-  <a href="#about" onclick="closeNav()">About</a>
-  <a href="#contact" onclick="closeNav()">Contact</a>
-  <button id="themeToggleMobile" class="theme-btn"><span class="tb-icon-m">☀️</span><span class="tb-txt-m"> Light Mode</span></button>
-</div>
+  <!-- Phaser 3 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
 
-<!-- ══════════ HERO ══════════ -->
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content fade-in">
-    <div class="hero-label">Open to opportunities</div>
-    <h1 class="hero-name">Arief<br>Putra Utama.</h1>
-    <p class="hero-tagline">Video Editor, Web Developer & Indie Game Developer — crafting digital experiences through code, design, and creativity.</p>
-    <div class="hero-cta">
-      <a href="#projects" class="btn btn-primary">View Work</a>
-      <a href="#contact" class="btn btn-secondary">Get in Touch</a>
-    </div>
-  </div>
-  <div class="hero-scroll">Scroll</div>
-</section>
-
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">Web Development</span><span class="marquee-item">Video Editing</span>
-    <span class="marquee-item">Game Development</span><span class="marquee-item">Adobe Photoshop</span>
-    <span class="marquee-item">Godot Engine</span><span class="marquee-item">Content Creation</span>
-    <span class="marquee-item">Pixel Art</span><span class="marquee-item">Android Dev</span>
-    <span class="marquee-item">Web Development</span><span class="marquee-item">Video Editing</span>
-    <span class="marquee-item">Game Development</span><span class="marquee-item">Adobe Photoshop</span>
-    <span class="marquee-item">Godot Engine</span><span class="marquee-item">Content Creation</span>
-    <span class="marquee-item">Pixel Art</span><span class="marquee-item">Android Dev</span>
-  </div>
-</div>
-
-<!-- ══════════ PROJECTS ══════════ -->
-<section id="projects">
-  <div class="fade-in"><div class="section-label">Selected Work</div><div class="section-title">Projects <span>/ 04</span></div></div>
-  <div class="projects-grid fade-in">
-    <div class="project-card" onclick="openModal('Project Alpha','2024','A full-stack e-commerce platform built with Next.js and Stripe integration. Features real-time inventory, admin dashboard, and mobile-first design.','https://www.youtube.com/embed/49MVkRt57c0?si=XuxbebrTq4ym4d-D')">
-      <img class="project-thumb" src="assets/photos/project-1.jpg" alt="Project Alpha" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="project-thumb" style="display:none;background:linear-gradient(135deg,#1a1a2e,#16213e);"><svg width="50" height="50" viewBox="0 0 60 60" fill="none"><rect x="10" y="10" width="40" height="40" rx="4" stroke="#c8a96e" stroke-width="1.5"/><path d="M20 30h20M30 20v20" stroke="#c8a96e" stroke-width="1.5"/></svg></div>
-      <div class="project-overlay"><div class="project-year">2024</div><div class="project-name">Project Alpha</div><div class="project-desc">Web Development · Full-Stack</div><span class="project-tag">▶ Watch Showcase</span></div>
-    </div>
-    <div class="project-card" onclick="openModal('Dashboard Pro','2024','An analytics dashboard with real-time data visualization, dark mode, and customizable widgets. Built with React and D3.js.','https://www.youtube.com/embed/uhNTrBkUCxM?si=GuEBbY2yZRX0X1H1')">
-      <img class="project-thumb" src="assets/photos/project-2.jpg" alt="Dashboard Pro" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="project-thumb" style="display:none;background:linear-gradient(135deg,#1a2e1a,#0d1f0d);"><svg width="50" height="50" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="20" stroke="#c8a96e" stroke-width="1.5"/><path d="M30 15v15l10 8" stroke="#c8a96e" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-      <div class="project-overlay"><div class="project-year">2024</div><div class="project-name">Dashboard Pro</div><div class="project-desc">Frontend · React · D3.js</div><span class="project-tag">▶ Watch Showcase</span></div>
-    </div>
-    <div class="project-card" onclick="openModal('Mobile App','2023','A cross-platform mobile application for task management with gesture-based interactions and offline sync.','https://www.youtube.com/embed/ErcSgxI5UR8?si=kbSF5zQT_zSDh8wy')">
-      <img class="project-thumb" src="assets/photos/project-3.jpg" alt="Mobile App" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="project-thumb" style="display:none;background:linear-gradient(135deg,#2e1a1a,#1f0d0d);"><svg width="50" height="50" viewBox="0 0 60 60" fill="none"><rect x="18" y="8" width="24" height="44" rx="4" stroke="#c8a96e" stroke-width="1.5"/><circle cx="30" cy="46" r="2" fill="#c8a96e"/></svg></div>
-      <div class="project-overlay"><div class="project-year">2023</div><div class="project-name">Mobile App</div><div class="project-desc">Android Development · UI Design</div><span class="project-tag">▶ Watch Showcase</span></div>
-    </div>
-    <div class="project-card" onclick="openModal('Game Dev','2023','A mobile pixel art game built with Godot Engine. Features hand-crafted pixel art, original soundtrack, and engaging gameplay mechanics.','https://www.youtube.com/embed/wgqwx6b0ksg?si=E7BX7Cvfg3kySAHw')">
-      <img class="project-thumb" src="assets/photos/project-4.jpg" alt="Game Dev" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="project-thumb" style="display:none;background:linear-gradient(135deg,#1a1a2e,#2e1a2e);"><svg width="50" height="50" viewBox="0 0 60 60" fill="none"><polygon points="30,10 50,45 10,45" stroke="#c8a96e" stroke-width="1.5" fill="none"/></svg></div>
-      <div class="project-overlay"><div class="project-year">2023</div><div class="project-name">Game Dev</div><div class="project-desc">Godot Engine · Pixel Art</div><span class="project-tag">▶ Watch Showcase</span></div>
-    </div>
-  </div>
-</section>
-
-<div class="modal" id="videoModal" onclick="closeModal(event)">
-  <div class="modal-inner">
-    <div class="modal-close" onclick="closeModal(event,true)">✕ Close</div>
-    <div class="modal-video"><iframe id="modalIframe" allowfullscreen></iframe></div>
-    <div class="modal-info">
-      <div class="modal-title" id="modalTitle"></div>
-      <div id="modalYear" style="color:var(--accent);font-size:0.72rem;letter-spacing:0.1em;margin:0.4rem 0;"></div>
-      <div class="modal-desc" id="modalDesc"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════ EXPERIENCE ══════════ -->
-<section id="experience">
-  <div class="fade-in"><div class="section-label">Career Path</div><div class="section-title">Experience <span>/ 05</span></div></div>
-  <div class="timeline fade-in">
-    <div class="timeline-item"><div class="timeline-year">Jan 2023 — Sep 2024</div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-role">Administrator</div><div class="timeline-company">Jaya Plastik Abadi Store · Surabaya</div><div class="timeline-desc">Handled administrative tasks, managed social media accounts, and served as Social Media Specialist. Also covered delivery duties when needed.</div></div></div>
-    <div class="timeline-item"><div class="timeline-year">Feb 2022 — Nov 2022</div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-role">Welder Helper</div><div class="timeline-company">Welding Workshop Putra · Samarinda</div><div class="timeline-desc">Learned metal welding techniques, precise measurement, and assembly of large structures. Became proficient in fabricating aluminum doors, rolling doors, and more.</div></div></div>
-    <div class="timeline-item"><div class="timeline-year">Agu 2016 — Jun 2017</div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-role">AC Technician Assistant</div><div class="timeline-company">Freelancer · Samarinda</div><div class="timeline-desc">Refilled Freon coolant, performed AC washing and installation, conducted routine vehicle cooler checks, and assisted with AC systems for events.</div></div></div>
-    <div class="timeline-item"><div class="timeline-year">Feb 2015 — Apr 2015</div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-role">SPG / SPB</div><div class="timeline-company">PT. Salim Surya Phone · Samarinda</div><div class="timeline-desc">Worked as a mobile phone and smartphone sales promoter at Suryaphone Samarinda, focused on promoting and selling products directly to consumers.</div></div></div>
-    <div class="timeline-item"><div class="timeline-year">Nov 2014 — Jan 2015</div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-role">Junior Cook Helper</div><div class="timeline-company">Bang Jago's Chicken Restaurant · Samarinda</div><div class="timeline-desc">Started as a waiter and dishwasher, then quickly promoted to Junior Cook Helper within days — demonstrating adaptability and strong work ethic.</div></div></div>
-  </div>
-</section>
-
-<!-- ══════════ CERTIFICATES ══════════ -->
-<section id="certificates">
-  <div class="fade-in"><div class="section-label">Credentials</div><div class="section-title">Certificates <span>/ 20</span></div></div>
-  <div class="cert-grid fade-in">
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-eec.jpg','Effective English Course (EEC)')"><div class="cert-icon">🎓</div><div class="cert-name">Effective English Course (EEC)</div><div class="cert-issuer">Darul Ulum Telecommunication Vocational School</div><div class="cert-date">May 2014</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-kompetensi.jpg','Certificate of Competency — RPL')"><div class="cert-icon">💻</div><div class="cert-name">Certificate of Competency — RPL</div><div class="cert-issuer">PT. Jawa Media Komputama · Komputek</div><div class="cert-date">24 Feb 2014</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-eng-olympiad-2012.jpg','National English Olympiad 2012')"><div class="cert-icon">🏆</div><div class="cert-name">National English Olympiad</div><div class="cert-issuer">Universitas Brawijaya · PDIM FEB UB</div><div class="cert-date">6 Oct 2012</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-eng-olympiad-2013.jpg','National English Olympiad II')"><div class="cert-icon">🏆</div><div class="cert-name">National English Olympiad II</div><div class="cert-issuer">Universitas Brawijaya Malang</div><div class="cert-date">28 Sep 2013</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-math-olympiad.jpg','National Math Olympiad 2013')"><div class="cert-icon">🏆</div><div class="cert-name">National Math Olympiad</div><div class="cert-issuer">Universitas Brawijaya Malang</div><div class="cert-date">29 Sep 2013</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-pkl-stt.jpg','Internship — STT Malang & RRI')"><div class="cert-icon">📡</div><div class="cert-name">Internship — STT Malang & RRI</div><div class="cert-issuer">Sekolah Tinggi Teknik Malang · Microsoft Partner</div><div class="cert-date">28 Feb 2013</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-excel-analisis.jpg','Excel Data Analysis')"><div class="cert-icon">📊</div><div class="cert-name">Excel Data Analysis</div><div class="cert-issuer">Microsoft Skills for Jobs · Jobstreet</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-chatgpt-dasar.jpg','ChatGPT Basics for Beginners')"><div class="cert-icon">🤖</div><div class="cert-name">ChatGPT Basics for Beginners</div><div class="cert-issuer">Markplus Institute · Jobstreet</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-digital-marketing.jpg','Digital Marketing — Basic Training')"><div class="cert-icon">📣</div><div class="cert-name">Digital Marketing — Basic Training</div><div class="cert-issuer">Jobstreet Career Hub</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-powerpoint.jpg','PowerPoint Mastery')"><div class="cert-icon">📑</div><div class="cert-name">PowerPoint Mastery</div><div class="cert-issuer">Jobstreet Career Hub</div><div class="cert-date">4 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-project-mgmt.jpg','Project Management from Scratch')"><div class="cert-icon">🗂️</div><div class="cert-name">Project Management from Scratch</div><div class="cert-issuer">Microsoft Skills for Jobs · Jobstreet</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-excel-rumus.jpg','Excel Basic Formulas Mastery')"><div class="cert-icon">📋</div><div class="cert-name">Excel Basic Formulas Mastery</div><div class="cert-issuer">Jobstreet Career Hub</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-product-manager.jpg','Product Manager Fundamentals')"><div class="cert-icon">🌱</div><div class="cert-name">Product Manager Fundamentals</div><div class="cert-issuer">Binar · Seek Jobstreet</div><div class="cert-date">4 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-branding-chatgpt.jpg','Advanced Branding with ChatGPT')"><div class="cert-icon">✨</div><div class="cert-name">Advanced Branding with ChatGPT</div><div class="cert-issuer">Markplus Institute · Jobstreet</div><div class="cert-date">4 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-data-science.jpg','Data Science Basic Training')"><div class="cert-icon">🔬</div><div class="cert-name">Data Science Basic Training</div><div class="cert-issuer">Jobstreet Career Hub</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-excel-ai-hr.jpg','Excel & AI for HR Admin')"><div class="cert-icon">🧮</div><div class="cert-name">Excel & AI for HR Admin</div><div class="cert-issuer">Seek Jobstreet · Jobsdb</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-word-copilot.jpg','Microsoft Word with Copilot')"><div class="cert-icon">📝</div><div class="cert-name">Microsoft Word with Copilot</div><div class="cert-issuer">Jobstreet · Microsoft</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-pm-pabrik.jpg','Project Manager Training for Factory')"><div class="cert-icon">🏭</div><div class="cert-name">Project Manager Training for Factory</div><div class="cert-issuer">Jobstreet Career Hub</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-cv-word-ai.jpg','CV Writing with Word & AI')"><div class="cert-icon">📄</div><div class="cert-name">CV Writing with Word & AI</div><div class="cert-issuer">Seek Jobstreet · Jobsdb</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-    <div class="cert-card" onclick="openCertLB('assets/certificates/cert-uiux.jpg','Introduction to UI/UX Design')"><div class="cert-icon">🎨</div><div class="cert-name">Introduction to UI/UX Design</div><div class="cert-issuer">Binar · Seek Jobstreet</div><div class="cert-date">2 Jun 2026</div><div class="cert-arrow">↗</div></div>
-  </div>
-</section>
-
-<div class="cert-lightbox" id="certLightbox" onclick="closeCertLB(event)">
-  <div class="cert-lightbox-inner">
-    <div class="cert-no-save" oncontextmenu="return false;" ondragstart="return false;"></div>
-    <img id="certLBImg" src="" alt="" oncontextmenu="return false;" ondragstart="return false;" draggable="false">
-  </div>
-  <div class="cert-lb-name" id="certLBName"></div>
-  <div class="cert-lb-close" onclick="document.getElementById('certLightbox').classList.remove('open');document.body.style.overflow=''">✕ Close</div>
-</div>
-
-<!-- ══════════ ABOUT ══════════ -->
-<section id="about">
-  <div class="fade-in"><div class="section-label">Who I Am</div><div class="section-title">About <span>Me</span></div></div>
-  <div class="about-inner fade-in">
-    <div class="about-photo">
-      <img src="assets/photos/profile.jpg" alt="Arief Putra Utama" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="photo-fallback" style="display:none;"><span>◈</span>assets/photos/profile.jpg</div>
-    </div>
-    <div class="about-text">
-      <p class="about-bio">Hi, I'm <strong style="color:var(--text)">Arief Putra Utama</strong> — a versatile creator based in Indonesia, known online as <strong style="color:var(--accent)">Yellow Duck</strong>.<br><br>
-      I'm quite expert in video and photo editing — it's one of my biggest passions. Beyond that, I have hands-on experience in administration, social media management, website creation & management, Backend, Frontend, Android Development, and Game Development.<br><br>
-      I'm a fast learner who thrives in diverse environments. Whether it's coding a web app, crafting pixel art, or editing a cinematic video — I bring the same dedication and curiosity to everything I do.<br><br>
-      🎓 Graduated from <strong style="color:var(--text)">Darul Ulum Telecommunication Vocational School</strong> in <strong style="color:var(--text)">2014</strong>, majoring in <strong style="color:var(--text)">Software Engineering</strong>.</p>
-      <div class="skills-title">Skills & Tools</div>
-      <div class="skills-list">
-        <span class="skill-tag">Adobe Photoshop</span><span class="skill-tag">Filmora</span><span class="skill-tag">CapCut</span>
-        <span class="skill-tag">Godot Engine</span><span class="skill-tag">Web Development</span><span class="skill-tag">Game Development</span>
-        <span class="skill-tag">Content Creation</span><span class="skill-tag">Android Development</span><span class="skill-tag">AI Prompt</span>
-        <span class="skill-tag">Microsoft Office</span><span class="skill-tag">Social Media Management</span><span class="skill-tag">Pixel Art</span>
-      </div>
-      <div class="skills-title">Hobbies</div>
-      <div class="hobbies-list">
-        <span class="skill-tag">🎬 Video Editing</span><span class="skill-tag">🎨 Pixel Art</span>
-        <span class="skill-tag">🤖 AI Prompt</span><span class="skill-tag">🎵 Music</span><span class="skill-tag">🎮 Game Dev</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ GALLERY ══════════ -->
-<section id="gallery">
-  <div class="fade-in"><div class="section-label">Visual Diary</div><div class="section-title">Gallery <span>/ Moments</span></div></div>
-  <div class="gallery-masonry fade-in">
-    <div class="gallery-item" onclick="openLightbox(this)"><img src="assets/photos/gallery-1.jpg" alt="Gallery 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="photo-fallback" style="display:none;aspect-ratio:1;"><span>🖼</span>gallery-1.jpg</div></div>
-    <div class="gallery-item" onclick="openLightbox(this)"><img src="assets/photos/gallery-2.jpg" alt="Gallery 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="photo-fallback" style="display:none;aspect-ratio:3/4;"><span>🖼</span>gallery-2.jpg</div></div>
-    <div class="gallery-item" onclick="openLightbox(this)"><img src="assets/photos/gallery-3.jpg" alt="Gallery 3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="photo-fallback" style="display:none;aspect-ratio:4/3;"><span>🖼</span>gallery-3.jpg</div></div>
-    <div class="gallery-item" onclick="openLightbox(this)"><img src="assets/photos/gallery-4.jpg" alt="Gallery 4" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="photo-fallback" style="display:none;aspect-ratio:3/4;"><span>🖼</span>gallery-4.jpg</div></div>
-    <div class="gallery-item" onclick="openLightbox(this)"><img src="assets/photos/gallery-5.jpg" alt="Gallery 5" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="photo-fallback" style="display:none;aspect-ratio:1;"><span>🖼</span>gallery-5.jpg</div></div>
-    <div class="gallery-item" onclick="openLightbox(this)"><img src="assets/photos/gallery-6.jpg" alt="Gallery 6" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="photo-fallback" style="display:none;aspect-ratio:4/3;"><span>🖼</span>gallery-6.jpg</div></div>
-  </div>
-</section>
-<div class="lightbox" id="lightbox" onclick="closeGalleryLB(event)">
-  <div class="lb-close">✕ Close</div>
-  <img id="lbImg" src="" alt="">
-</div>
-
-<!-- ══════════ BLOG ══════════ -->
-<section id="blog">
-  <div class="fade-in"><div class="section-label">Tulisan & Ide</div><div class="section-title">Blog <span>/ Articles</span></div></div>
-  <div class="blog-grid fade-in">
-    <div class="blog-card" onclick="openBlog(0)"><span class="blog-tag">Tutorial · Web Dev</span><div class="blog-title">How to Build a Portfolio with Pure HTML, CSS & JavaScript</div><div class="blog-excerpt">You don't always need a big framework. With just HTML, CSS, and JS you can build something stunning, fast, and easy to maintain.</div><div class="blog-meta"><span>5 Jun 2026 · 5 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(1)"><span class="blog-tag">Game Dev · Godot</span><div class="blog-title">Getting Started with Godot Engine as a Beginner</div><div class="blog-excerpt">Godot is a free, open-source game engine that's lightweight and beginner-friendly. Here's everything you need to know to get started.</div><div class="blog-meta"><span>3 Jun 2026 · 6 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(2)"><span class="blog-tag">Tips · Productivity</span><div class="blog-title">5 AI Tools Every Content Creator Should Try in 2026</div><div class="blog-excerpt">The content creation world is changing fast. Here are five AI tools that are genuinely useful — not just hype.</div><div class="blog-meta"><span>1 Jun 2026 · 4 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(3)"><span class="blog-tag">Video Editing · Tips</span><div class="blog-title">Cinematic Color Grading with CapCut and Filmora</div><div class="blog-excerpt">Color grading transforms ordinary footage into something cinematic. This is the exact workflow I use every day with CapCut and Filmora.</div><div class="blog-meta"><span>28 Mei 2026 · 5 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(4)"><span class="blog-tag">Pixel Art · Design</span><div class="blog-title">Learning Pixel Art from Zero: A Complete Beginner's Guide</div><div class="blog-excerpt">Pixel art looks simple but has real depth. From tools and shading techniques to animation — everything covered here.</div><div class="blog-meta"><span>25 Mei 2026 · 7 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(5)"><span class="blog-tag">Career · Story</span><div class="blog-title">My Self-Taught Programming Journey: Real Experience</div><div class="blog-excerpt">Not having a formal IT degree isn't a barrier. This is my honest story of learning coding, web dev, and game dev from scratch.</div><div class="blog-meta"><span>20 Mei 2026 · 8 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(6)"><span class="blog-tag">Android Dev · Tutorial</span><div class="blog-title">Building Your First Android App: A Practical Guide</div><div class="blog-excerpt">Android development can be daunting at first. Here's a step-by-step guide to building and publishing your first real app.</div><div class="blog-meta"><span>15 Mei 2026 · 7 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(7)"><span class="blog-tag">Social Media · Strategy</span><div class="blog-title">How to Manage Multiple Social Media Accounts Efficiently</div><div class="blog-excerpt">Managing Instagram, Facebook, X, YouTube, and LinkedIn simultaneously is exhausting — unless you have the right system.</div><div class="blog-meta"><span>10 Mei 2026 · 5 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(8)"><span class="blog-tag">Design · UI/UX</span><div class="blog-title">Dark Mode UI Design: Principles and Best Practices</div><div class="blog-excerpt">Dark mode is more than just inverting colors. Here are the core principles behind a well-crafted dark UI — like this portfolio.</div><div class="blog-meta"><span>5 Mei 2026 · 6 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(9)"><span class="blog-tag">Adobe Photoshop · Tutorial</span><div class="blog-title">10 Photoshop Techniques That Will Level Up Your Editing</div><div class="blog-excerpt">After years of using Photoshop, these are the ten techniques I keep coming back to. From masking to smart objects.</div><div class="blog-meta"><span>1 Mei 2026 · 6 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(10)"><span class="blog-tag">GitHub · Web Dev</span><div class="blog-title">Deploying a Static Website to GitHub Pages: Step by Step</div><div class="blog-excerpt">GitHub Pages is free, fast, and surprisingly powerful. Here's a complete guide to getting your portfolio live in under 10 minutes.</div><div class="blog-meta"><span>25 Apr 2026 · 4 min read</span><span class="blog-arrow">↗</span></div></div>
-    <div class="blog-card" onclick="openBlog(11)"><span class="blog-tag">Freelance · Career</span><div class="blog-title">Lessons from Working Across 5 Completely Different Industries</div><div class="blog-excerpt">From store admin to welder to AC technician to developer — here's what working across wildly different fields taught me about adaptability.</div><div class="blog-meta"><span>18 Apr 2026 · 7 min read</span><span class="blog-arrow">↗</span></div></div>
-  </div>
-</section>
-
-<div class="blog-modal" id="blogModal" onclick="closeBlogModal(event)">
-  <div class="blog-modal-inner" id="blogModalInner">
-    <div class="blog-modal-close" onclick="document.getElementById('blogModal').classList.remove('open');document.body.style.overflow=''">✕ Close</div>
-    <span class="blog-modal-tag" id="bmTag"></span>
-    <div class="blog-modal-title" id="bmTitle"></div>
-    <div class="blog-modal-meta" id="bmMeta"></div>
-    <div class="blog-modal-body" id="bmBody"></div>
-  </div>
-</div>
-
-<!-- ══════════ CONTACT ══════════ -->
-<section id="contact">
-  <div class="contact-inner fade-in">
-    <div class="section-label">Let's Talk</div>
-    <div class="contact-big">Got a project<br>in mind?</div>
-    <p class="contact-sub">I'm always open to new opportunities, creative collaborations, or just a great conversation about design, tech, and creativity.</p>
-    <div class="contact-links">
-      <a href="mailto:ariefputrautama2019@gmail.com" class="contact-link-item"><svg viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>ariefputrautama2019@gmail.com</a>
-      <div class="contact-divider"></div>
-      <a href="mailto:yellowduckdev31@gmail.com" class="contact-link-item"><svg viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>yellowduckdev31@gmail.com</a>
-      <div class="contact-divider"></div>
-      <a href="https://wa.me/62895413212875" class="contact-link-item" target="_blank"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>+62 895-4132-12875</a>
-    </div>
-    <div class="socials">
-      <a href="https://www.linkedin.com/in/ariefputrautama31121995/" class="social-link" target="_blank">LinkedIn</a>
-      <a href="https://github.com/yellowduckdev31" class="social-link" target="_blank">GitHub</a>
-      <a href="https://www.instagram.com/ariefputrautama/" class="social-link" target="_blank">Instagram</a>
-      <a href="https://web.facebook.com/ariefputrautamaa" class="social-link" target="_blank">Facebook</a>
-      <a href="https://x.com/yellowducksolo" class="social-link" target="_blank">X / Twitter</a>
-      <a href="https://www.youtube.com/@lexyjins" class="social-link" target="_blank">YouTube</a>
-    </div>
-    <div class="visitor-wrap">
-      <div class="visitor-label">Recent Visitors</div>
-      <div class="visitor-ticker"><div class="visitor-track" id="visitorTrack"></div></div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <span class="footer-name">Arief Putra Utama — Yellow Duck</span>
-  <span class="footer-copy">© 2026</span>
-</footer>
-
-<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
-
-<script>
-const blogs = [
-  {tag:'Tutorial · Web Dev',title:'How to Build a Portfolio with Pure HTML, CSS & JavaScript',meta:'5 Jun 2026 · 5 min read',body:`<p>Many developers think they need React, Vue, or Next.js to build an impressive portfolio. In reality, plain HTML, CSS, and JavaScript can produce something stunning, fast, and incredibly easy to maintain.</p><h3>Why Skip the Framework?</h3><p>Frameworks are powerful, but for a static personal portfolio they're often overkill. Large bundle sizes, long build times, complex setups — none of that is necessary when your goal is to show your work.</p><h3>Start with One File</h3><p>Begin with a single <code>index.html</code>. Combine all CSS and JavaScript inside it for easy deployment, especially useful with GitHub Pages where no build step is required.</p><h3>Design Tips</h3><p>Use CSS Variables for a consistent color system. Leverage Flexbox and CSS Grid for responsive layouts. Add fade-in animations with the Intersection Observer API to make the page feel alive.</p><p>Most importantly: your portfolio is a reflection of you. Keep it honest, keep it simple, and keep it easy to update.</p>`},
-  {tag:'Game Dev · Godot',title:'Getting Started with Godot Engine as a Beginner',meta:'3 Jun 2026 · 6 min read',body:`<p>Godot Engine is one of the best open-source game engines available today. It's lightweight, completely free, and has a growing community. It's the ideal starting point for anyone wanting to make games.</p><h3>Why Godot?</h3><p>Compared to Unity or Unreal Engine, Godot is far more beginner-friendly. It's small (under 100MB), requires no license fee, and its scripting language GDScript is similar to Python — very easy to learn.</p><h3>Where to Begin?</h3><p>Create a new project and choose a 2D template for your first game. Learn the Node and Scene concept — it's the foundation of everything in Godot. Every object in your game is a Node, and a collection of Nodes forms a Scene.</p><h3>Your First Game</h3><p>Start simple: a 2D platformer. Build a character that can move left-right and jump. Add platforms, then obstacles. It doesn't need to be perfect — it just needs to be playable and finished.</p>`},
-  {tag:'Tips · Productivity',title:'5 AI Tools Every Content Creator Should Try in 2026',meta:'1 Jun 2026 · 4 min read',body:`<p>AI is no longer something distant. In 2026, AI tools have become part of daily creative workflows. Here are five that are genuinely useful.</p><h3>1. Claude (Anthropic)</h3><p>For writing, brainstorming, and analyzing content. Excellent for drafting articles, captions, or video scripts in seconds.</p><h3>2. Runway ML</h3><p>For AI-powered video editing. Features like background removal, motion tracking, and visual generation are incredibly helpful for creative content.</p><h3>3. ElevenLabs</h3><p>For natural-sounding voice synthesis. Great for video narration, podcasts, or dubbing content into other languages.</p><h3>4. Midjourney / DALL-E</h3><p>For generating thumbnails, illustrations, and visual assets from text prompts. Saves significant time compared to searching for stock photos.</p><h3>5. Descript</h3><p>A video editor where you edit video like editing a text document. Delete or change words in the transcript and the video updates accordingly.</p>`},
-  {tag:'Video Editing · Tips',title:'Cinematic Color Grading with CapCut and Filmora',meta:'28 Mei 2026 · 5 min read',body:`<p>Color grading is the art of transforming ordinary footage into something that feels like a film. The good news: you don't need DaVinci Resolve to achieve it.</p><h3>Understand the Basics First</h3><p>Before grading, make sure your footage is properly exposed. Study the histogram and waveform monitor. Good exposure makes grading significantly easier.</p><h3>Workflow in CapCut</h3><p>Start by adjusting Exposure and Contrast. Then use Color Curves to adjust shadows, midtones, and highlights independently. Finally, use the Color Wheel to add the desired color tone.</p><h3>The Cinematic Look</h3><p>For that cinematic feel: push shadows slightly blue, keep highlights warm/golden, and lift the blacks slightly so they're not pure black. This gives the popular "teal and orange" look seen in Hollywood films.</p><h3>LUT (Look Up Table)</h3><p>The fastest path to great grading is using a LUT. Many cinematic LUTs are available for free online. Simply import one and adjust the intensity to taste.</p>`},
-  {tag:'Pixel Art · Design',title:'Learning Pixel Art from Zero: A Complete Beginner\'s Guide',meta:'25 Mei 2026 · 7 min read',body:`<p>Pixel art is a unique medium — every pixel is placed intentionally and meaningfully. It's not about low resolution; it's about precise artistic expression.</p><h3>Tools You'll Need</h3><p>Start with Aseprite (paid but worth it) or Libresprite (free). For beginners, even MS Paint can work for basic practice.</p><h3>Core Concepts</h3><p>Learn about sprite sheets, animation frames, and color palettes. Limit your palette — professional artists often work with just 16 or even 8 colors per sprite.</p><h3>Shading Technique</h3><p>Pixel art uses "dithering" — manually mixing two colors to create a smooth transition. Choose one light source and stay consistent with it throughout.</p><h3>Animation</h3><p>Start with a simple idle animation (a character breathing), then work up to a walk cycle. A well-executed walk cycle is the benchmark — master it and you've mastered the fundamentals of pixel art animation.</p>`},
-  {tag:'Career · Story',title:'My Self-Taught Programming Journey: Real Experience',meta:'20 Mei 2026 · 8 min read',body:`<p>I graduated from Darul Ulum Telecommunication Vocational School majoring in Software Engineering in 2014. But honestly, most of what I know today came from teaching myself — not from school.</p><h3>Where Did It Start?</h3><p>After graduating, I worked across very different fields — from store administrator to welder's assistant to AC technician. In between, I kept learning to code from YouTube, forums, and documentation.</p><h3>Consistency Beats Talent</h3><p>I'm not the smartest person in the room. But I'm consistent. Every day, even just a little, I read something new or tried building something new. Over time, those small moments compound into real skill.</p><h3>Don't Fear Failure</h3><p>Every project I built early on looked terrible and was full of bugs. That's normal. What matters is finishing it and learning from the process. Don't spend too long in "tutorial hell" — build something real.</p><h3>The Message</h3><p>If you're reading this and feel like you don't have enough background or a degree — trust me, skills and a portfolio speak louder than a certificate. Start today, a little at a time.</p>`},
-  {tag:'Android Dev · Tutorial',title:'Building Your First Android App: A Practical Guide',meta:'15 Mei 2026 · 7 min read',body:`<p>Android development might seem intimidating at first, but with the right approach it's surprisingly approachable. Here's a practical guide for getting your first app from idea to the Play Store.</p><h3>Choose Your Stack</h3><p>For beginners, Android Studio with Kotlin is the recommended path. Kotlin is modern, concise, and officially supported by Google. Avoid starting with React Native or Flutter until you understand native development basics.</p><h3>Your First App</h3><p>Build something simple and personal — a note-taking app, a calculator, or a simple to-do list. Simple apps force you to learn the real fundamentals: Activities, Intents, Layouts, and data persistence.</p><h3>UI with XML or Compose</h3><p>Jetpack Compose is the modern way to build Android UIs using code. Traditional XML layouts still work fine. For beginners, XML might be easier to understand visually, but Compose is worth learning long-term.</p><h3>Testing and Publishing</h3><p>Test on a real device, not just an emulator. Create a Google Play Developer account ($25 one-time fee) and publish your app. Having a live app on the Play Store is a great addition to your portfolio.</p>`},
-  {tag:'Social Media · Strategy',title:'How to Manage Multiple Social Media Accounts Efficiently',meta:'10 Mei 2026 · 5 min read',body:`<p>Managing Instagram, Facebook, X, YouTube, and LinkedIn simultaneously can be exhausting — unless you build the right system around it.</p><h3>Batch Content Creation</h3><p>Instead of creating content daily, batch-create once a week. Spend one day filming, one day editing, and one day writing captions. This reduces context-switching and dramatically improves output quality.</p><h3>Use a Content Calendar</h3><p>Plan your content 2–4 weeks ahead. A simple spreadsheet works fine. Column per platform, row per day. Mark what goes where and when. Consistency is what algorithms reward most.</p><h3>Platform-Specific Content</h3><p>Don't post the same thing everywhere. YouTube wants long-form, TikTok wants short punchy clips, Instagram loves high-quality visuals, and LinkedIn prefers professional insights. Adapt the same core idea into each format.</p><h3>Tools That Help</h3><p>Buffer and Later are great free tools for scheduling posts. For analytics, each platform's native dashboard is usually sufficient. Focus on engagement rate, not just follower count — that's the metric that actually matters.</p>`},
-  {tag:'Design · UI/UX',title:'Dark Mode UI Design: Principles and Best Practices',meta:'5 Mei 2026 · 6 min read',body:`<p>Dark mode is more than inverting colors. A well-designed dark UI — like this portfolio — follows specific principles that make it comfortable to read and visually striking.</p><h3>Don't Use Pure Black</h3><p>Pure #000000 backgrounds create too much contrast against white text, causing eye strain. Use very dark grays like #0a0a0a or #111111 as your base. This is why this portfolio uses those exact values.</p><h3>Elevation Through Lightness</h3><p>In dark UIs, higher elements appear lighter, not with drop shadows. A card on a dark background should be slightly lighter than the background itself — this creates visual hierarchy without shadows.</p><h3>Accent Colors Matter More</h3><p>In dark mode, your accent color carries a lot of visual weight. Choose warm accent colors (gold, amber, soft orange) for elegance. Cool blues and purples also work well. Avoid overly saturated neon colors.</p><h3>Typography Contrast</h3><p>Body text at 100% white on dark backgrounds is too harsh. Use off-white (#f0ede8) for primary text and grays (#666) for secondary text. This creates a comfortable reading hierarchy.</p>`},
-  {tag:'Adobe Photoshop · Tutorial',title:'10 Photoshop Techniques That Will Level Up Your Editing',meta:'1 Mei 2026 · 6 min read',body:`<p>After years of using Photoshop daily for photo editing and design, these are the ten techniques I return to again and again.</p><h3>1. Non-Destructive Editing with Smart Objects</h3><p>Always convert layers to Smart Objects before transforming or applying filters. This lets you edit or remove those changes at any time without losing quality.</p><h3>2. Adjustment Layers</h3><p>Never apply Curves, Levels, or Hue/Saturation directly to a layer. Use Adjustment Layers instead — they're non-destructive and can be turned off or masked anytime.</p><h3>3. Luminosity Masks</h3><p>For precise selections based on brightness, luminosity masks are unbeatable. They let you target highlights, shadows, or midtones with surgical precision.</p><h3>4. Frequency Separation</h3><p>For skin retouching, frequency separation splits a photo into texture and color layers. Fix uneven skin tone on the color layer without touching the texture layer — results look completely natural.</p><h3>5. The Camera Raw Filter</h3><p>Even for non-raw files, the Camera Raw filter (Filter > Camera Raw) gives you full Lightroom-style controls inside Photoshop. Use it as a Smart Filter on a Smart Object for a completely non-destructive workflow.</p>`},
-  {tag:'GitHub · Web Dev',title:'Deploying a Static Website to GitHub Pages: Step by Step',meta:'25 Apr 2026 · 4 min read',body:`<p>GitHub Pages is one of the easiest ways to host a static website for free. It's fast, reliable, and supports custom domains. Here's how to go from zero to live in under 10 minutes.</p><h3>What You Need</h3><p>A GitHub account (free), your website files (at minimum an <code>index.html</code>), and Git installed on your computer. That's it.</p><h3>Step 1: Create a Repository</h3><p>Go to github.com and create a new repository. Name it anything — for example, "portfolio". Make sure it's set to Public.</p><h3>Step 2: Push Your Files</h3><p>In your terminal: <code>git init</code>, <code>git add .</code>, <code>git commit -m "first commit"</code>, then connect and push to your new repo.</p><h3>Step 3: Enable GitHub Pages</h3><p>Go to your repository Settings → Pages → under Source, select "Deploy from a branch" → choose Main branch → root folder → Save.</p><h3>Your Site is Live</h3><p>Within 1–2 minutes your site will be available at <code>username.github.io/repository-name</code>. For a custom domain, add it in the Pages settings and update your DNS records.</p>`},
-  {tag:'Freelance · Career',title:'Lessons from Working Across 5 Completely Different Industries',meta:'18 Apr 2026 · 7 min read',body:`<p>Store administrator. Welder's assistant. AC technician. Smartphone sales promoter. Cook helper. And now a developer and creative professional. My career path is anything but linear — and I wouldn't change a thing.</p><h3>Every Job Teaches Something Transferable</h3><p>Welding taught me precision and measurement. AC technician work taught me diagnostics — the ability to identify root causes and fix them systematically. Sales taught me communication and how people make decisions. These skills show up in my technical work constantly.</p><h3>Adaptability is a Superpower</h3><p>When you've started a new job in an unfamiliar field multiple times, starting something new stops being scary. You know you can figure it out. That mindset is invaluable in tech, where the landscape changes every year.</p><h3>The Value of Manual Work</h3><p>I have deep respect for manual labor. Working with your hands teaches patience, attention to detail, and the satisfaction of finishing something tangible. These are qualities that make you a better programmer too.</p><h3>Don't Wait for the Perfect Path</h3><p>My path wasn't planned. I didn't follow a curriculum or roadmap. I took opportunities as they came and kept learning. If you're at an early stage of your career, take the job, learn everything you can, and keep building your skills on the side.</p>`}
-];
-
-// ── WELCOME ──
-function enterSite(){
-  const name=document.getElementById('visitorInput').value.trim()||'Tamu';
-  saveVisitor(name);
-  document.getElementById('welcome').classList.add('hidden');
-  document.body.style.overflow='';
-}
-document.getElementById('visitorInput').addEventListener('keydown',e=>{if(e.key==='Enter')enterSite();});
-document.body.style.overflow='hidden';
-
-// ── VISITORS ──
-function saveVisitor(name){
-  let list=JSON.parse(localStorage.getItem('yd_visitors')||'[]');
-  list=list.filter(n=>n!==name);list.unshift(name);
-  if(list.length>5)list=list.slice(0,5);
-  localStorage.setItem('yd_visitors',JSON.stringify(list));
-  renderVisitors(list);
-}
-function renderVisitors(list){
-  if(!list||!list.length){document.querySelector('.visitor-wrap').style.display='none';return;}
-  const d=[...list,...list];
-  document.getElementById('visitorTrack').innerHTML=d.map(n=>`<span class="visitor-name">${n}</span>`).join('');
-}
-const ex=JSON.parse(localStorage.getItem('yd_visitors')||'[]');
-if(ex.length)renderVisitors(ex);else document.querySelector('.visitor-wrap').style.display='none';
-
-// ── NAV MOBILE ──
-document.getElementById('navToggle').addEventListener('click',function(){
-  this.classList.toggle('open');
-  document.getElementById('navMobile').classList.toggle('open');
-});
-function closeNav(){
-  document.getElementById('navToggle').classList.remove('open');
-  document.getElementById('navMobile').classList.remove('open');
-}
-
-// ── THEME ──
-function applyTheme(light){
-  document.body.classList.toggle('light-mode',light);
-  const icon=light?'🌙':'☀️',txt=light?' Dark Mode':' Light Mode';
-  document.querySelector('.tb-icon').textContent=icon;
-  document.querySelector('.tb-txt').textContent=txt;
-  document.querySelector('.tb-icon-m').textContent=icon;
-  document.querySelector('.tb-txt-m').textContent=txt;
-  localStorage.setItem('yd_theme',light?'light':'dark');
-}
-const savedTheme=localStorage.getItem('yd_theme');
-if(savedTheme==='light')applyTheme(true);
-document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(!document.body.classList.contains('light-mode')));
-document.getElementById('themeToggleMobile').addEventListener('click',()=>applyTheme(!document.body.classList.contains('light-mode')));
-
-// ── FADE IN ──
-const obs=new IntersectionObserver(els=>{els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
-document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
-
-// ── VIDEO MODAL ──
-function openModal(t,y,d,u){
-  document.getElementById('modalTitle').textContent=t;
-  document.getElementById('modalYear').textContent=y;
-  document.getElementById('modalDesc').textContent=d;
-  document.getElementById('modalIframe').src=u;
-  document.getElementById('videoModal').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeModal(e,f=false){
-  if(f||e.target.id==='videoModal'){
-    document.getElementById('videoModal').classList.remove('open');
-    document.getElementById('modalIframe').src='';
-    document.body.style.overflow='';
-  }
-}
-
-// ── GALLERY LIGHTBOX ──
-function openLightbox(item){
-  const img=item.querySelector('img');
-  if(img&&img.style.display!=='none'){
-    document.getElementById('lbImg').src=img.src;
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow='hidden';
-  }
-}
-function closeGalleryLB(e){
-  if(e.target.id==='lightbox'||e.target.classList.contains('lb-close')){
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow='';
-  }
-}
-
-// ── CERT LIGHTBOX ──
-function openCertLB(src,name){
-  document.getElementById('certLBImg').src=src;
-  document.getElementById('certLBName').textContent=name;
-  document.getElementById('certLightbox').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeCertLB(e){
-  if(e.target.id==='certLightbox'){
-    document.getElementById('certLightbox').classList.remove('open');
-    document.body.style.overflow='';
-  }
-}
-
-// ── BLOG MODAL ──
-function openBlog(i){
-  const b=blogs[i];
-  document.getElementById('bmTag').textContent=b.tag;
-  document.getElementById('bmTitle').textContent=b.title;
-  document.getElementById('bmMeta').textContent=b.meta;
-  document.getElementById('bmBody').innerHTML=b.body;
-  document.getElementById('blogModal').classList.add('open');
-  document.getElementById('blogModalInner').scrollTop=0;
-  document.body.style.overflow='hidden';
-}
-function closeBlogModal(e){
-  if(e.target.id==='blogModal'){
-    document.getElementById('blogModal').classList.remove('open');
-    document.body.style.overflow='';
-  }
-}
-
-// ── BACK TO TOP ──
-window.addEventListener('scroll',()=>document.getElementById('backToTop').classList.toggle('show',window.scrollY>400));
-
-// ── ESC ──
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    ['videoModal','lightbox','certLightbox','blogModal'].forEach(id=>document.getElementById(id).classList.remove('open'));
-    document.getElementById('modalIframe').src='';
-    document.body.style.overflow='';
-  }
-});
-
-// ── IMAGE PROTECTION ──
-document.addEventListener('contextmenu',e=>{if(e.target.tagName==='IMG')e.preventDefault();});
-document.addEventListener('dragstart',e=>{if(e.target.tagName==='IMG')e.preventDefault();});
-
-// ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const t=document.querySelector(a.getAttribute('href'));
-    if(t){e.preventDefault();closeNav();t.scrollIntoView({behavior:'smooth'});}
-  });
-});
-</script>
+  <!-- Game Entry Point -->
+  <script type="module" src="./src/core/game.js"></script>
 </body>
 </html>
