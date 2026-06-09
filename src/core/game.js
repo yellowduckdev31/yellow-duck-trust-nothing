@@ -12,6 +12,11 @@
  *   Section 38 — Orientation: Landscape preferred
  */
 
+import { Diagnostics } from '../utils/Diagnostics.js';
+
+// Initialize Diagnostics
+Diagnostics.initialize();
+
 import { GAME_CONFIG, SCENES } from './config.js';
 
 import { BootScene }           from '../scenes/BootScene.js';
@@ -24,6 +29,7 @@ import { LevelCompleteOverlay } from '../scenes/LevelCompleteOverlay.js';
 import { GameOverScene }       from '../scenes/GameOverScene.js';
 import { VictoryScene }        from '../scenes/VictoryScene.js';
 import { LeaderboardScene }    from '../scenes/LeaderboardScene.js';
+import { UIScene }             from '../scenes/UIScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -69,6 +75,7 @@ const config = {
     GameOverScene,
     VictoryScene,
     LeaderboardScene,
+    UIScene,
   ],
 };
 

@@ -17,6 +17,7 @@ import { firebaseConfig } from '../../firebase/firebase-config.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
 import { LeaderboardSystem } from '../systems/LeaderboardSystem.js';
 import { AchievementSystem } from '../systems/AchievementSystem.js';
+import { Diagnostics } from '../utils/Diagnostics.js';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -57,10 +58,6 @@ export class BootScene extends Phaser.Scene {
       loadingText.destroy();
     });
 
-    // 1. Generate placeholder textures FIRST as a safety fallback.
-    //    If a real PNG loads successfully below, Phaser replaces the canvas texture.
-    this.generatePlaceholderTextures();
-
     // 2. Load character sprite sheets (48x64 per frame)
     this.load.spritesheet('YD_Idle',  'assets/character/YD_Idle_Sheet.png',  { frameWidth: 48, frameHeight: 64 });
     this.load.spritesheet('YD_Walk',  'assets/character/YD_Walk_Sheet.png',  { frameWidth: 48, frameHeight: 64 });
@@ -96,6 +93,9 @@ export class BootScene extends Phaser.Scene {
   async create() {
     console.log("Booting game and initializing systems...");
 
+    // Generate fallback graphics for any missing assets
+    this.generateMissingFallbacks();
+
     // 1. Define character animations from loaded sprite sheets
     this.createAnimations();
 
@@ -128,56 +128,50 @@ export class BootScene extends Phaser.Scene {
     this.scene.start(SCENES.USERNAME);
   }
 
+  createAnimationSafe(key, textureKey, start, end, frameRate, repeat) {
+    if (this.anims.exists(key)) return;
+
+    const texture = this.textures.get(textureKey);
+    if (!texture || texture.key === '__MISSING') {
+      Diagnostics.error(`Texture ${textureKey} not found, skipping animation ${key}`);
+      console.warn(`Texture ${textureKey} not found, skipping animation ${key}`);
+      return;
+    }
+
+    // Safety check frame count for valid animation generation
+    let frames;
+    if (texture.frameTotal > end) {
+      frames = this.anims.generateFrameNumbers(textureKey, { start, end });
+    } else {
+      Diagnostics.error(`Texture ${textureKey} has only ${texture.frameTotal} frames. Cannot create multi-frame animation ${key}. Using frame 0.`);
+      console.warn(`Texture ${textureKey} has only ${texture.frameTotal} frames. Cannot create multi-frame animation ${key}. Using frame 0.`);
+      frames = [{ key: textureKey, frame: 0 }];
+    }
+
+    this.anims.create({
+      key,
+      frames,
+      frameRate,
+      repeat
+    });
+  }
+
   createAnimations() {
-    // Guard: skip if animations already exist (e.g. hot reload)
-    if (this.anims.exists('idle')) return;
-
-    // Idle — 4 frames, gentle breathing loop
-    this.anims.create({
-      key: 'idle',
-      frames: this.anims.generateFrameNumbers('YD_Idle', { start: 0, end: 3 }),
-      frameRate: 6,
-      repeat: -1,
-    });
-
-    // Walk — 8 frames, full waddle cycle
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('YD_Walk', { start: 0, end: 7 }),
-      frameRate: 12,
-      repeat: -1,
-    });
-
-    // Jump — 2 frames: crouch → airborne
-    this.anims.create({
-      key: 'jump',
-      frames: this.anims.generateFrameNumbers('YD_Jump', { start: 0, end: 1 }),
-      frameRate: 8,
-      repeat: 0,
-    });
-
-    // Fall — 2 frames: panic falling loop
-    this.anims.create({
-      key: 'fall',
-      frames: this.anims.generateFrameNumbers('YD_Fall', { start: 0, end: 1 }),
-      frameRate: 6,
-      repeat: -1,
-    });
-
-    // Death — 4 frames: hit → stumble → falling → collapsed
-    this.anims.create({
-      key: 'death',
-      frames: this.anims.generateFrameNumbers('YD_Death', { start: 0, end: 3 }),
-      frameRate: 8,
-      repeat: 0,
-    });
+    this.createAnimationSafe('idle',  'YD_Idle',  0, 3, 6, -1);
+    this.createAnimationSafe('walk',  'YD_Walk',  0, 7, 12, -1);
+    this.createAnimationSafe('jump',  'YD_Jump',  0, 1, 8, 0);
+    this.createAnimationSafe('fall',  'YD_Fall',  0, 1, 6, -1);
+    this.createAnimationSafe('death', 'YD_Death', 0, 3, 8, 0);
 
     console.log('Character animations registered: idle, walk, jump, fall, death');
   }
 
-  generatePlaceholderTextures() {
-    // Generates basic colored squares to act as textures if PNGs are missing
+  generateMissingFallbacks() {
     const makeTex = (key, color, w, h) => {
+      if (this.textures.exists(key)) return;
+
+      Diagnostics.error(`Asset '${key}' missing. Generating fallback placeholder.`);
+      console.warn(`Asset '${key}' missing. Generating fallback placeholder.`);
       const g = this.add.graphics();
       g.fillStyle(color, 1);
       g.fillRect(0, 0, w, h);
@@ -187,15 +181,28 @@ export class BootScene extends Phaser.Scene {
       g.destroy();
     };
 
+    // Safe fallbacks matching all used asset keys in the game
     makeTex('YD_Idle', 0xFFD43B, 48, 64);
+    makeTex('YD_Walk', 0xFFD43B, 48, 64);
+    makeTex('YD_Jump', 0xFFD43B, 48, 64);
+    makeTex('YD_Fall', 0xFFD43B, 48, 64);
+    makeTex('YD_Death', 0xFFD43B, 48, 64);
+    makeTex('YD_Portrait', 0xFFD43B, 128, 128);
+    makeTex('YD_Menu', 0xFFD43B, 256, 256);
+
     makeTex('GroundTile', 0x4CAF50, 64, 64);
+    makeTex('WallTile', 0x555555, 64, 64);
     makeTex('GoalDoor', 0x795548, 64, 128);
     makeTex('CheckpointFlag', 0x8BC34A, 64, 128);
+
     makeTex('TRAP_StaticSpike', 0xC62828, 64, 64);
     makeTex('TRAP_MovingSpike', 0xB71C1C, 64, 64);
     makeTex('TRAP_HiddenSpike', 0xD32F2F, 64, 64);
     makeTex('TRAP_FakeFloor', 0x388E3C, 64, 64);
-    makeTex('TRAP_MovingPlatform', 0x607D8B, 128, 64);
+    makeTex('TRAP_FallingPlatform', 0x8D6E63, 128, 32);
+    makeTex('TRAP_MovingPlatform', 0x607D8B, 128, 32);
+    makeTex('TRAP_FakeExit', 0x4E342E, 64, 128);
+
     makeTex('UI_HeartFull', 0xF44336, 32, 32);
     makeTex('UI_HeartEmpty', 0x9E9E9E, 32, 32);
   }

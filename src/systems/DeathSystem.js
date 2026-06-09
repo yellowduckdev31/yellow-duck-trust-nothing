@@ -64,7 +64,8 @@ export class DeathSystem {
     this.isDead = true;
 
     // 1. Freeze Frame
-    this.scene.physics.world.isPaused = true;
+    this.scene.physics.pause();
+    console.log('Physics state: PAUSED');
 
     // 2. Screen Shake (Intensity 0.02, Duration 200ms)
     this.scene.cameras.main.shake(200, 0.02);
@@ -103,7 +104,8 @@ export class DeathSystem {
         if (onComplete) onComplete();
         
         // Unpause physics
-        this.scene.physics.world.isPaused = false;
+        this.scene.physics.resume();
+        console.log('Physics state: RESUMED');
         
         // Hide UI
         this.overlay.setVisible(false);

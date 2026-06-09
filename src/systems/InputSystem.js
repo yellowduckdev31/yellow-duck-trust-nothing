@@ -44,17 +44,15 @@ export class InputSystem {
       ESC: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
     };
 
+    console.log('Input initialized');
+
     if (onPauseCallback) {
       this.keys.ESC.on('down', onPauseCallback);
     }
 
-    // 2. Mobile Virtual Buttons (Section 07)
-    // Create them regardless of isMobile flag to ensure they work if testing mobile layout on desktop,
-    // but typically we'd only show them if isMobile or touch is enabled.
-    // For safety, we check if pointer input is active/device has touch.
-    if (this.isMobile || this.scene.sys.game.device.input.touch) {
-      this.createVirtualButtons(onPauseCallback);
-    }
+    // Reset inputs on window blur to prevent keys sticking
+    this.blurListener = () => this.resetInputs();
+    window.addEventListener('blur', this.blurListener);
   }
 
   /**
@@ -180,6 +178,10 @@ export class InputSystem {
     // Remove ESC key listener
     if (this.keys.ESC) {
       this.keys.ESC.off('down');
+    }
+
+    if (this.blurListener) {
+      window.removeEventListener('blur', this.blurListener);
     }
 
     // Destroy virtual button objects

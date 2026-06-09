@@ -53,8 +53,8 @@ export class MainMenuScene extends Phaser.Scene {
   // --- Actions ---
 
   onPlay() {
-    // Navigate to Level Select
-    this.scene.start(SCENES.LEVEL_SELECT);
+    // Navigate to Game Scene directly as requested
+    this.scene.start(SCENES.GAME, { level: 1 });
   }
 
   onLeaderboard() {

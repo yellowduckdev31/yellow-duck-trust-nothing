@@ -68,9 +68,16 @@ export class GameScene extends Phaser.Scene {
     this.inputSystem = new InputSystem(this);
 
     // 3. Setup Player
-    this.currentCheckpoint = { x: this.levelEnvironment.spawn.x, y: this.levelEnvironment.spawn.y };
+    const startX = this.levelEnvironment.spawn.x;
+    this.currentCheckpoint = { x: startX, y: this.levelEnvironment.spawn.y };
     this.playerSystem.createPlayer(this.currentCheckpoint.x, this.currentCheckpoint.y);
+    this.playerSystem.startX = startX;
     const playerSprite = this.playerSystem.getPlayer().getSprite();
+
+    // Create static invisible boundary wall at starting X boundary (to prevent moving backward)
+    const boundaryWall = this.add.rectangle(startX - 29, this.levelEnvironment.height / 2, 10, this.levelEnvironment.height, 0x000000, 0);
+    this.physics.add.existing(boundaryWall, true);
+    boundaryWall.setVisible(false);
 
     // 4. Setup Traps & Environment
     this.trapSystem.createTraps(this.levelEnvironment.trapsData);
@@ -78,6 +85,7 @@ export class GameScene extends Phaser.Scene {
     // Physics Layers
     this.physics.add.collider(playerSprite, this.levelEnvironment.solidGroup);
     this.physics.add.collider(playerSprite, this.trapSystem.getSolidGroup());
+    this.physics.add.collider(playerSprite, boundaryWall);
 
     // Death Collisions
     this.physics.add.overlap(playerSprite, this.trapSystem.getLethalGroup(), (p, t) => {
@@ -117,6 +125,8 @@ export class GameScene extends Phaser.Scene {
 
     // Setup input system after creation
     this.inputSystem.setup(() => this.onPause());
+
+    this.scene.launch('UIScene');
 
     // Play BGM
     // this.sound.play('BGM_Gameplay', { loop: true });
@@ -176,6 +186,8 @@ export class GameScene extends Phaser.Scene {
     const player = this.playerSystem.getPlayer();
     if (!player || !player.isAlive) return;
 
+    if (this.inputSystem) this.inputSystem.resetInputs();
+
     this.stats.deaths++;
     this.stats.lives = this.playerSystem.die();
     this.updateHUD();
@@ -225,6 +237,7 @@ export class GameScene extends Phaser.Scene {
 
   onPause() {
     this.isPaused = true;
+    if (this.inputSystem) this.inputSystem.resetInputs();
     this.scene.pause();
     this.scene.launch(SCENES.PAUSE, { level: this.currentLevel });
   }

@@ -11,6 +11,7 @@
 
 import { GAME_CONFIG } from '../core/config.js';
 import { Player } from '../entities/Player.js';
+import { Diagnostics } from '../utils/Diagnostics.js';
 
 export class PlayerSystem {
   /**
@@ -19,6 +20,7 @@ export class PlayerSystem {
   constructor(scene) {
     this.scene = scene;
     this.player = null;
+    this.lastMoveState = 'idle';
   }
 
   /**
@@ -38,6 +40,23 @@ export class PlayerSystem {
     return this.player;
   }
 
+  playAnimationSafe(sprite, animKey, ignoreIfPlaying = true) {
+    if (!sprite || !sprite.anims) return;
+    
+    // Check if the animation exists globally in the scene's anims manager
+    if (this.scene.anims.exists(animKey)) {
+      sprite.anims.play(animKey, ignoreIfPlaying);
+    } else {
+      console.warn(`Animation '${animKey}' does not exist. Falling back.`);
+      // Fallback to idle if possible, otherwise stop anims
+      if (animKey !== 'idle' && this.scene.anims.exists('idle')) {
+        sprite.anims.play('idle', ignoreIfPlaying);
+      } else {
+        sprite.anims.stop();
+      }
+    }
+  }
+
   /**
    * Update player movement based on input.
    * @param {object} input - Input state from InputSystem
@@ -45,21 +64,56 @@ export class PlayerSystem {
   update(input) {
     if (!this.player || !this.player.isAlive) return;
     
+    console.log('Player update running');
+
     const sprite = this.player.getSprite();
+
+    // Clamp player X position to prevent moving backward beyond starting area
+    if (this.startX !== undefined && sprite.x < this.startX) {
+      sprite.x = this.startX;
+      if (sprite.body.velocity.x < 0) {
+        sprite.body.setVelocityX(0);
+        sprite.body.setAccelerationX(0);
+      }
+    }
+
     const isGrounded = sprite.body.blocked.down || sprite.body.touching.down;
+
+    // Track logical movement state transitions to avoid spamming every frame
+    let state = 'idle';
+    if (input.left) {
+      state = 'walk_left';
+    } else if (input.right) {
+      state = 'walk_right';
+    }
+    if (!isGrounded) {
+      state = sprite.body.velocity.y < 0 ? 'jump' : 'fall';
+    }
+
+    if (state !== this.lastMoveState) {
+      Diagnostics.event('Player movement state changed', {
+        from: this.lastMoveState,
+        to: state,
+        x: Math.round(sprite.x),
+        y: Math.round(sprite.y),
+        velocityX: Math.round(sprite.body.velocity.x),
+        velocityY: Math.round(sprite.body.velocity.y)
+      });
+      this.lastMoveState = state;
+    }
 
     // Horizontal Movement
     if (input.left) {
       sprite.setAccelerationX(-GAME_CONFIG.PHYSICS.ACCELERATION);
       sprite.setFlipX(true);
-      if (isGrounded) sprite.anims.play('walk', true);
+      if (isGrounded) this.playAnimationSafe(sprite, 'walk');
     } else if (input.right) {
       sprite.setAccelerationX(GAME_CONFIG.PHYSICS.ACCELERATION);
       sprite.setFlipX(false);
-      if (isGrounded) sprite.anims.play('walk', true);
+      if (isGrounded) this.playAnimationSafe(sprite, 'walk');
     } else {
       sprite.setAccelerationX(0);
-      if (isGrounded) sprite.anims.play('idle', true);
+      if (isGrounded) this.playAnimationSafe(sprite, 'idle');
     }
 
     // Jumping
@@ -70,9 +124,9 @@ export class PlayerSystem {
     // Mid-air animations
     if (!isGrounded) {
       if (sprite.body.velocity.y < 0) {
-        sprite.anims.play('jump', true);
+        this.playAnimationSafe(sprite, 'jump');
       } else {
-        sprite.anims.play('fall', true);
+        this.playAnimationSafe(sprite, 'fall');
       }
     }
   }
@@ -89,9 +143,15 @@ export class PlayerSystem {
     const remainingLives = this.player.loseLife();
 
     const sprite = this.player.getSprite();
+    Diagnostics.event('Player death event triggered', {
+      deaths: this.player.deaths,
+      livesRemaining: remainingLives,
+      x: Math.round(sprite.x),
+      y: Math.round(sprite.y)
+    });
     sprite.setVelocity(0, 0);
     sprite.body.allowGravity = false; // Stop falling during death sequence
-    sprite.anims.play('death', true);
+    this.playAnimationSafe(sprite, 'death');
 
     return remainingLives;
   }
@@ -106,14 +166,14 @@ export class PlayerSystem {
 
     this.player.isAlive = true;
 
+    Diagnostics.event('Player respawn event triggered', { x, y });
+
     const sprite = this.player.getSprite();
-    sprite.setPosition(x, y);
-    sprite.setVelocity(0, 0);
+    sprite.body.reset(x, y); // Safely reset physics body, position, velocity, and acceleration
     sprite.body.allowGravity = true;
     sprite.setAlpha(1); // Reset alpha in case of fade effects
-    sprite.anims.play('idle', true);
-
-    // Optional: Add brief invincibility/flicker effect here
+    this.playAnimationSafe(sprite, 'idle');
+    this.lastMoveState = 'idle'; // Reset tracking state on respawn
   }
 
   destroy() {
